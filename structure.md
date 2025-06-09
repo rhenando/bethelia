@@ -23,6 +23,10 @@ bethelia
 │   │   │   │   ├── 2.pack.gz
 │   │   │   │   ├── 20.pack.gz
 │   │   │   │   ├── 21.pack.gz
+│   │   │   │   ├── 22.pack.gz
+│   │   │   │   ├── 23.pack.gz
+│   │   │   │   ├── 24.pack.gz
+│   │   │   │   ├── 25.pack.gz
 │   │   │   │   ├── 3.pack.gz
 │   │   │   │   ├── 4.pack.gz
 │   │   │   │   ├── 5.pack.gz
@@ -34,6 +38,8 @@ bethelia
 │   │   │   │   └── index.pack.gz.old
 │   │   │   ├── client-development-fallback
 │   │   │   │   ├── 0.pack.gz
+│   │   │   │   ├── 1.pack.gz
+│   │   │   │   ├── index.pack.gz
 │   │   │   │   └── index.pack.gz.old
 │   │   │   └── server-development
 │   │   │       ├── 0.pack.gz
@@ -55,7 +61,14 @@ bethelia
 │   │   │       ├── 23.pack.gz
 │   │   │       ├── 24.pack.gz
 │   │   │       ├── 25.pack.gz
+│   │   │       ├── 26.pack.gz
+│   │   │       ├── 27.pack.gz
+│   │   │       ├── 28.pack.gz
+│   │   │       ├── 29.pack.gz
 │   │   │       ├── 3.pack.gz
+│   │   │       ├── 30.pack.gz
+│   │   │       ├── 31.pack.gz
+│   │   │       ├── 32.pack.gz
 │   │   │       ├── 4.pack.gz
 │   │   │       ├── 5.pack.gz
 │   │   │       ├── 6.pack.gz
@@ -70,31 +83,40 @@ bethelia
 │   │   │   ├── _not-found
 │   │   │   │   ├── page_client-reference-manifest.js
 │   │   │   │   └── page.js
+│   │   │   ├── signin
+│   │   │   │   ├── page_client-reference-manifest.js
+│   │   │   │   └── page.js
 │   │   │   ├── page_client-reference-manifest.js
 │   │   │   └── page.js
-│   │   ├── pages
-│   │   │   ├── _app.js
-│   │   │   ├── _document.js
-│   │   │   └── _error.js
 │   │   ├── vendor-chunks
+│   │   │   ├── @firebase.js
+│   │   │   ├── @grpc.js
+│   │   │   ├── @protobufjs.js
 │   │   │   ├── @radix-ui.js
 │   │   │   ├── @reduxjs.js
 │   │   │   ├── @swc.js
 │   │   │   ├── class-variance-authority.js
 │   │   │   ├── clsx.js
 │   │   │   ├── echarts.js
+│   │   │   ├── firebase.js
+│   │   │   ├── idb.js
 │   │   │   ├── immer.js
+│   │   │   ├── lodash.camelcase.js
+│   │   │   ├── long.js
 │   │   │   ├── lucide-react.js
 │   │   │   ├── next.js
+│   │   │   ├── protobufjs.js
 │   │   │   ├── react-redux.js
+│   │   │   ├── redux-persist.js
 │   │   │   ├── redux-thunk.js
 │   │   │   ├── redux.js
 │   │   │   ├── reselect.js
+│   │   │   ├── sonner.js
 │   │   │   ├── swiper.js
 │   │   │   ├── tailwind-merge.js
+│   │   │   ├── tslib.js
 │   │   │   ├── use-sync-external-store.js
 │   │   │   └── zrender.js
-│   │   ├── _error.js
 │   │   ├── app-paths-manifest.json
 │   │   ├── interception-route-rewrite-manifest.js
 │   │   ├── middleware-build-manifest.js
@@ -111,32 +133,14 @@ bethelia
 │   │   │   ├── app
 │   │   │   │   ├── _not-found
 │   │   │   │   │   └── page.js
+│   │   │   │   ├── signin
+│   │   │   │   │   └── page.js
 │   │   │   │   ├── layout.js
 │   │   │   │   └── page.js
-│   │   │   ├── fallback
-│   │   │   │   ├── pages
-│   │   │   │   │   ├── _app.js
-│   │   │   │   │   └── _error.js
-│   │   │   │   ├── _app-pages-browser_node_modules_next_dist_client_dev_noop-turbopack-hmr_js.js
-│   │   │   │   ├── _pages-dir-browser_node_modules_next_dist_pages__app_js.js
-│   │   │   │   ├── _pages-dir-browser_node_modules_next_dist_pages__error_js.js
-│   │   │   │   ├── amp.js
-│   │   │   │   ├── main-app.js
-│   │   │   │   ├── main.js
-│   │   │   │   ├── react-refresh.js
-│   │   │   │   └── webpack.js
-│   │   │   ├── pages
-│   │   │   │   ├── _app.js
-│   │   │   │   └── _error.js
 │   │   │   ├── _app-pages-browser_node_modules_next_dist_client_dev_noop-turbopack-hmr_js.js
-│   │   │   ├── _error.js
-│   │   │   ├── _pages-dir-browser_node_modules_next_dist_pages__app_js.js
-│   │   │   ├── _pages-dir-browser_node_modules_next_dist_pages__error_js.js
 │   │   │   ├── app-pages-internals.js
 │   │   │   ├── main-app.js
-│   │   │   ├── main.js
 │   │   │   ├── polyfills.js
-│   │   │   ├── react-refresh.js
 │   │   │   └── webpack.js
 │   │   ├── css
 │   │   │   └── app
@@ -154,48 +158,88 @@ bethelia
 │   │   │   └── ba015fad6dcf6784-s.woff2
 │   │   └── webpack
 │   │       ├── app
-│   │       │   ├── layout.19799cbcde1801f0.hot-update.js
-│   │       │   ├── layout.298bddd93cba6664.hot-update.js
-│   │       │   ├── layout.36752d007b37128b.hot-update.js
-│   │       │   ├── layout.6b0db11d2dc461c0.hot-update.js
-│   │       │   ├── layout.71384a8b99c94d46.hot-update.js
-│   │       │   ├── layout.b16a35344f73c989.hot-update.js
-│   │       │   ├── layout.d10ddce7bec9cd60.hot-update.js
-│   │       │   └── layout.eddee36bf8c656f1.hot-update.js
-│   │       ├── 0dbff86ba1004497.webpack.hot-update.json
-│   │       ├── 19799cbcde1801f0.webpack.hot-update.json
-│   │       ├── 298bddd93cba6664.webpack.hot-update.json
-│   │       ├── 36752d007b37128b.webpack.hot-update.json
+│   │       │   ├── signin
+│   │       │   │   ├── page.20dc294ccb8f9f11.hot-update.js
+│   │       │   │   ├── page.36dad784dd75b321.hot-update.js
+│   │       │   │   ├── page.376a8c9e2931aec2.hot-update.js
+│   │       │   │   ├── page.8bfd60841ca96e14.hot-update.js
+│   │       │   │   ├── page.b4a2cc0b60d61509.hot-update.js
+│   │       │   │   ├── page.c738c255510f553e.hot-update.js
+│   │       │   │   └── page.d97b85c0ae8b7fdd.hot-update.js
+│   │       │   ├── layout.039eda364bb7e4df.hot-update.js
+│   │       │   ├── layout.20dc294ccb8f9f11.hot-update.js
+│   │       │   ├── layout.36dad784dd75b321.hot-update.js
+│   │       │   ├── layout.376a8c9e2931aec2.hot-update.js
+│   │       │   ├── layout.5ad9d127f03407b4.hot-update.js
+│   │       │   ├── layout.732130c094fb451d.hot-update.js
+│   │       │   ├── layout.8bfd60841ca96e14.hot-update.js
+│   │       │   ├── layout.9524ac3494647f51.hot-update.js
+│   │       │   ├── layout.99f3d0df9a1493af.hot-update.js
+│   │       │   ├── layout.9ec9234e501449b9.hot-update.js
+│   │       │   ├── layout.b02741bbdab769ec.hot-update.js
+│   │       │   ├── layout.b4a2cc0b60d61509.hot-update.js
+│   │       │   ├── layout.c738c255510f553e.hot-update.js
+│   │       │   ├── layout.d97b85c0ae8b7fdd.hot-update.js
+│   │       │   ├── layout.f3b4e67b877f032b.hot-update.js
+│   │       │   └── layout.f433f8118c60ee17.hot-update.js
+│   │       ├── 039eda364bb7e4df.webpack.hot-update.json
+│   │       ├── 20dc294ccb8f9f11.webpack.hot-update.json
+│   │       ├── 36dad784dd75b321.webpack.hot-update.json
+│   │       ├── 376a8c9e2931aec2.webpack.hot-update.json
+│   │       ├── 5ad9d127f03407b4.webpack.hot-update.json
 │   │       ├── 633457081244afec._.hot-update.json
-│   │       ├── 6b0db11d2dc461c0.webpack.hot-update.json
-│   │       ├── 71384a8b99c94d46.webpack.hot-update.json
-│   │       ├── 8ebee314b8d91f2f.webpack.hot-update.json
-│   │       ├── b16a35344f73c989.webpack.hot-update.json
-│   │       ├── d10ddce7bec9cd60.webpack.hot-update.json
-│   │       ├── eddee36bf8c656f1.webpack.hot-update.json
-│   │       ├── webpack.0dbff86ba1004497.hot-update.js
-│   │       ├── webpack.19799cbcde1801f0.hot-update.js
-│   │       ├── webpack.298bddd93cba6664.hot-update.js
-│   │       ├── webpack.36752d007b37128b.hot-update.js
-│   │       ├── webpack.6b0db11d2dc461c0.hot-update.js
-│   │       ├── webpack.71384a8b99c94d46.hot-update.js
-│   │       ├── webpack.8ebee314b8d91f2f.hot-update.js
-│   │       ├── webpack.b16a35344f73c989.hot-update.js
-│   │       ├── webpack.d10ddce7bec9cd60.hot-update.js
-│   │       └── webpack.eddee36bf8c656f1.hot-update.js
+│   │       ├── 732130c094fb451d.webpack.hot-update.json
+│   │       ├── 8bfd60841ca96e14.webpack.hot-update.json
+│   │       ├── 940379159fa4df6a.webpack.hot-update.json
+│   │       ├── 9524ac3494647f51.webpack.hot-update.json
+│   │       ├── 99f3d0df9a1493af.webpack.hot-update.json
+│   │       ├── 9ec9234e501449b9.webpack.hot-update.json
+│   │       ├── b02741bbdab769ec.webpack.hot-update.json
+│   │       ├── b4a2cc0b60d61509.webpack.hot-update.json
+│   │       ├── c738c255510f553e.webpack.hot-update.json
+│   │       ├── d97b85c0ae8b7fdd.webpack.hot-update.json
+│   │       ├── f3b4e67b877f032b.webpack.hot-update.json
+│   │       ├── f433f8118c60ee17.webpack.hot-update.json
+│   │       ├── webpack.039eda364bb7e4df.hot-update.js
+│   │       ├── webpack.20dc294ccb8f9f11.hot-update.js
+│   │       ├── webpack.36dad784dd75b321.hot-update.js
+│   │       ├── webpack.376a8c9e2931aec2.hot-update.js
+│   │       ├── webpack.5ad9d127f03407b4.hot-update.js
+│   │       ├── webpack.732130c094fb451d.hot-update.js
+│   │       ├── webpack.8bfd60841ca96e14.hot-update.js
+│   │       ├── webpack.940379159fa4df6a.hot-update.js
+│   │       ├── webpack.9524ac3494647f51.hot-update.js
+│   │       ├── webpack.99f3d0df9a1493af.hot-update.js
+│   │       ├── webpack.9ec9234e501449b9.hot-update.js
+│   │       ├── webpack.b02741bbdab769ec.hot-update.js
+│   │       ├── webpack.b4a2cc0b60d61509.hot-update.js
+│   │       ├── webpack.c738c255510f553e.hot-update.js
+│   │       ├── webpack.d97b85c0ae8b7fdd.hot-update.js
+│   │       ├── webpack.f3b4e67b877f032b.hot-update.js
+│   │       └── webpack.f433f8118c60ee17.hot-update.js
 │   ├── types
 │   │   ├── app
+│   │   │   ├── signin
+│   │   │   │   └── page.ts
 │   │   │   ├── layout.ts
 │   │   │   └── page.ts
 │   │   ├── cache-life.d.ts
 │   │   └── package.json
 │   ├── app-build-manifest.json
 │   ├── build-manifest.json
-│   ├── fallback-build-manifest.json
 │   ├── package.json
 │   ├── react-loadable-manifest.json
 │   └── trace
 ├── app
+│   ├── profile
+│   │   └── page.jsx
+│   ├── signin
+│   │   └── page.jsx
+│   ├── supplier
+│   │   └── welcome
+│   │       └── page.jsx
+│   ├── supplier-registration
+│   │   └── page.jsx
 │   ├── favicon.ico
 │   ├── globals.css
 │   ├── layout.js
@@ -214,13 +258,21 @@ bethelia
 │   │   ├── badge.jsx
 │   │   ├── button.jsx
 │   │   ├── card.jsx
+│   │   ├── dialog.jsx
 │   │   ├── input.jsx
 │   │   ├── separator.jsx
 │   │   └── tabs.jsx
+│   ├── ClientLayout.jsx
 │   ├── Footer.jsx
 │   ├── Header.jsx
+│   ├── LayoutWrapper.jsx
+│   ├── ProtectedRoute.jsx
 │   └── SearchBar.jsx
+├── hooks
+│   └── useBadgeSync.js
 ├── lib
+│   ├── firebase.js
+│   ├── headerIconsConfig.js
 │   └── utils.js
 ├── public
 │   ├── file.svg
@@ -229,6 +281,8 @@ bethelia
 │   ├── vercel.svg
 │   └── window.svg
 ├── store
+│   ├── authSlice.js
+│   ├── badgeSlice.js
 │   ├── searchSlice.js
 │   └── store.js
 ├── .gitignore
