@@ -10,6 +10,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { auth } from "@/lib/firebase";
 import { clearUser } from "@/store/authSlice";
 import { useRouter } from "next/navigation";
+import SignUpDialog from "@/components/SignUpDialog";
 
 const Header = () => {
   const [showCategories, setShowCategories] = useState(false);
@@ -240,7 +241,7 @@ const Header = () => {
           </li>
 
           <li className='hover:text-blue-600 cursor-pointer'>
-            <Link href='/supplier-registration'>Become a Supplier</Link>
+            <SignUpDialog />
           </li>
           <li className='hover:text-blue-600 cursor-pointer'>
             Request for Quotation
@@ -308,9 +309,9 @@ const Header = () => {
             <hr className='my-4 border-gray-300' />
             <ul className='flex flex-col gap-3 text-sm'>
               <li>
-                <Link href='/supplier-registration' className='text-gray-700'>
-                  Become a Supplier
-                </Link>
+                <span className='text-gray-700'>
+                  <SignUpDialog />
+                </span>
               </li>
               <li>
                 <span className='text-gray-700'>Request for Quotation</span>
