@@ -1,338 +1,303 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
-import { ChevronDown, LogOut, LayoutDashboard, Menu, X } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
-import SearchBar from "./SearchBar";
-import Link from "next/link";
-import { headerIcons } from "@/lib/headerIconsConfig";
+import React, { useEffect, useState, Fragment } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { auth } from "@/lib/firebase";
+import { ChevronDown, User, Heart, ShoppingCart } from "lucide-react";
+import { Listbox, Menu as HeadlessMenu, Transition } from "@headlessui/react";
 import { clearUser } from "@/store/authSlice";
-import { useRouter } from "next/navigation";
-import signup from "@/app/signup/page";
 
-const Header = () => {
-  const [showCategories, setShowCategories] = useState(false);
-  const [showSuppliers, setShowSuppliers] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const categoriesRef = useRef(null);
-  const suppliersRef = useRef(null);
-  const dropdownRef = useRef(null);
-  const cartCount = useSelector((state) => state.badge.cartCount);
-  const messagesCount = useSelector((state) => state.badge.messagesCount);
-  const currentUser = useSelector((state) => state.auth.user);
+// Philippine locations
+const defaultLocations = [
+  { id: 1, name: "Manila" },
+  { id: 2, name: "Cebu" },
+  { id: 3, name: "Davao" },
+];
+
+// Sample menu items
+const suppliers = ["Supplier One", "Supplier Two", "Supplier Three"];
+const categoriesList = [
+  "Electronics",
+  "Men's Fashion",
+  "Women's Fashion",
+  "Kids' Fashion",
+  "Home & Kitchen",
+  "Beauty & Fragrance",
+  "Baby",
+  "Toys",
+  "Sports & Outdoors",
+];
+
+// Stub for reverse geocoding
+async function fetchCityFromCoords(lat, lon) {
+  return "Manila";
+}
+
+export default function Header() {
   const dispatch = useDispatch();
-  const router = useRouter();
+  const user = useSelector((state) => state.auth.user);
 
-  const handleLogout = async () => {
-    await auth.signOut();
-    dispatch(clearUser());
-    router.push("/signin");
-  };
+  const [locations] = useState(defaultLocations);
+  const [selectedLocation, setSelectedLocation] = useState(locations[0]);
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setDropdownOpen(false);
-      }
-      if (
-        categoriesRef.current &&
-        !categoriesRef.current.contains(event.target)
-      ) {
-        setShowCategories(false);
-      }
-      if (
-        suppliersRef.current &&
-        !suppliersRef.current.contains(event.target)
-      ) {
-        setShowSuppliers(false);
-      }
-    };
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async ({ coords: { latitude, longitude } }) => {
+          try {
+            const city = await fetchCityFromCoords(latitude, longitude);
+            const match = locations.find((l) => l.name === city);
+            setSelectedLocation(match || { id: 0, name: city });
+          } catch {}
+        }
+      );
+    }
+  }, [locations]);
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  const handleLogout = () => {
+    dispatch(clearUser());
+    window.location.href = "/";
+  };
+
+  const getDisplayName = () => {
+    if (user?.displayName) return user.displayName;
+    if (user?.email) return user.email.split("@")[0];
+    if (user?.phone) return user.phone;
+    return "User";
+  };
+
+  // Determine dashboard path
+  const dashboardPath =
+    user?.role === "supplier" ? "/supplier-dashboard" : "/buyer-dashboard";
 
   return (
-    <header className='relative z-40 w-full border-b border-gray-200 text-sm text-gray-800'>
-      {/* Top Bar */}
-      <div className='container mx-auto px-4 py-2 flex flex-wrap justify-between items-center gap-y-2'>
-        <div className='flex items-center gap-3'>
-          <span>Welcome to Bethelia</span>
-          <Separator orientation='vertical' className='h-4 hidden sm:inline' />
-          <span className='hidden sm:inline'>English</span>
-          <Separator orientation='vertical' className='h-4 hidden sm:inline' />
-          <span className='hidden sm:inline'>USD</span>
-        </div>
-        <div className='flex items-center gap-4 text-xs'>
-          <span className='hover:underline cursor-pointer'>Supplier Zone</span>
-          <span className='hover:underline cursor-pointer'>Help Center</span>
-          <span className='hover:underline cursor-pointer'>App Download</span>
-        </div>
-      </div>
+    <>
+      <header>
+        <div className='bg-primary text-white'>
+          <div className='max-w-7xl mx-auto flex items-center h-14 px-4 sm:px-6 lg:px-8'>
+            <div className='flex-shrink-0 text-2xl font-bold'>Bethelia</div>
 
-      {/* Main Header */}
-      <div className='container mx-auto px-4 py-4 flex items-center justify-between'>
-        {/* Left: Logo + SearchBar */}
-        <div className='flex items-center gap-4 flex-1 min-w-0'>
-          <Link
-            href='/'
-            className='text-2xl font-bold text-blue-600 whitespace-nowrap'
-          >
-            <span className='text-blue-700'>Bethelia</span>
-          </Link>
-          <div className='flex-1 min-w-0 hidden sm:block'>
-            <SearchBar />
-          </div>
-        </div>
-
-        {/* Right: Icons and Menu */}
-        <div className='flex items-center gap-4'>
-          {/* Desktop icons */}
-          <div className='hidden sm:flex items-center gap-4 relative'>
-            {headerIcons.map(({ label, icon: Icon, href }) => {
-              const badge =
-                label === "Messages"
-                  ? messagesCount
-                  : label === "Cart"
-                  ? cartCount
-                  : undefined;
-
-              if (
-                currentUser &&
-                (label === "Sign In" || label === "Join Free")
-              ) {
-                return null;
-              }
-
-              return (
-                <Link
-                  key={label}
-                  href={href || "#"}
-                  className='relative flex flex-col items-center text-xs text-gray-700'
+            <div className='ml-6 relative'>
+              <Listbox value={selectedLocation} onChange={setSelectedLocation}>
+                <Listbox.Button className='inline-flex items-center space-x-1 cursor-pointer text-sm hover:underline'>
+                  <span>Deliver to {selectedLocation.name}</span>
+                  <ChevronDown className='h-4 w-4' />
+                </Listbox.Button>
+                <Transition
+                  as={Fragment}
+                  leave='transition ease-in duration-100'
+                  leaveFrom='opacity-100'
+                  leaveTo='opacity-0'
                 >
-                  <Icon className='w-5 h-5' />
-                  <span>{label}</span>
-                  {badge > 0 && (
-                    <span className='absolute -top-1 -right-2 bg-red-600 text-white text-[10px] rounded-full px-1'>
-                      {badge}
-                    </span>
-                  )}
-                </Link>
-              );
-            })}
-
-            {/* User Dropdown */}
-            {currentUser && (
-              <div
-                className='relative flex flex-col items-center text-xs text-gray-700 cursor-pointer'
-                onClick={() => setDropdownOpen((prev) => !prev)}
-                ref={dropdownRef}
-              >
-                <span className='w-6 h-6 rounded-full bg-gray-300 flex items-center justify-center text-white text-sm'>
-                  {currentUser.displayName?.charAt(0)?.toUpperCase() || "U"}
-                </span>
-                <span className='max-w-[60px] truncate'>
-                  {currentUser.displayName?.split(" ")[0] || "Profile"}
-                </span>
-
-                {dropdownOpen && (
-                  <div className='absolute top-full mt-2 right-0 bg-white border rounded-md shadow-md w-40 z-50'>
-                    <Link
-                      href='/dashboard'
-                      className='flex items-center px-4 py-2 hover:bg-gray-100 gap-2 text-sm'
-                    >
-                      <LayoutDashboard className='w-4 h-4' />
-                      Dashboard
-                    </Link>
-                    <button
-                      onClick={handleLogout}
-                      className='w-full text-left flex items-center px-4 py-2 hover:bg-gray-100 gap-2 text-sm'
-                    >
-                      <LogOut className='w-4 h-4' />
-                      Logout
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* Hamburger */}
-          <button className='sm:hidden' onClick={() => setMobileMenuOpen(true)}>
-            <Menu className='w-6 h-6' />
-          </button>
-        </div>
-      </div>
-
-      {/* Desktop Navigation */}
-      <nav className='bg-gray-100 py-3 relative z-10 hidden sm:block'>
-        <ul className='container mx-auto flex gap-8 text-sm font-medium text-gray-700'>
-          {/* All Categories Dropdown */}
-          <li className='relative' ref={categoriesRef}>
-            <button
-              onClick={() => setShowCategories((prev) => !prev)}
-              className='flex items-center gap-1 hover:text-blue-600 focus:outline-none'
-            >
-              <span>All Categories</span>
-              <ChevronDown
-                className={`w-4 h-4 transition-transform duration-200 ${
-                  showCategories ? "rotate-180" : ""
-                }`}
-              />
-            </button>
-            {showCategories && (
-              <div className='absolute top-full left-0 mt-2 flex flex-col bg-white shadow-lg rounded-md border w-56 z-50'>
-                {[
-                  "Electronics",
-                  "Machinery",
-                  "Apparel",
-                  "Home & Garden",
-                  "Automotive",
-                  "Beauty & Personal Care",
-                  "Sports & Outdoors",
-                  "Health & Medical",
-                ].map((cat) => (
-                  <div
-                    key={cat}
-                    className='px-4 py-2 hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer'
-                  >
-                    {cat}
-                  </div>
-                ))}
-              </div>
-            )}
-          </li>
-
-          {/* All Suppliers Dropdown */}
-          <li className='relative' ref={suppliersRef}>
-            <button
-              onClick={() => setShowSuppliers((prev) => !prev)}
-              className='flex items-center gap-1 hover:text-blue-600 focus:outline-none'
-            >
-              <span>All Suppliers</span>
-              <ChevronDown
-                className={`w-4 h-4 transition-transform duration-200 ${
-                  showSuppliers ? "rotate-180" : ""
-                }`}
-              />
-            </button>
-            {showSuppliers && (
-              <div className='absolute top-full left-0 mt-2 flex flex-col bg-white shadow-lg rounded-md border w-56 z-50'>
-                {[
-                  "Verified Suppliers",
-                  "Top Rated",
-                  "New Suppliers",
-                  "Local Suppliers",
-                  "Global Manufacturers",
-                  "OEM/ODM Providers",
-                ].map((sup) => (
-                  <div
-                    key={sup}
-                    className='px-4 py-2 hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer'
-                  >
-                    {sup}
-                  </div>
-                ))}
-              </div>
-            )}
-          </li>
-
-          <li>
-            <Link href='/signup' className='text-gray-700 hover:text-blue-600'>
-              Become a Supplier
-            </Link>
-          </li>
-          <li className='hover:text-blue-600 cursor-pointer'>
-            Request for Quotation
-          </li>
-          <li className='hover:text-blue-600 cursor-pointer'>Get App</li>
-          <li className='hover:text-blue-600 cursor-pointer'>New Arrivals</li>
-        </ul>
-      </nav>
-
-      {/* Mobile Slide-out Menu */}
-      {mobileMenuOpen && (
-        <div className='fixed top-0 left-0 w-full h-full bg-black/50 z-50 sm:hidden'>
-          <div className='bg-white w-72 h-full shadow-lg p-4 relative'>
-            <button
-              onClick={() => setMobileMenuOpen(false)}
-              className='absolute top-4 right-4'
-            >
-              <X className='w-5 h-5' />
-            </button>
-
-            {/* Auth / Icons */}
-            <div className='mt-8 space-y-4'>
-              {!currentUser &&
-                headerIcons.map(({ label, icon: Icon, href }) => {
-                  if (label !== "Sign In" && label !== "Join Free") return null;
-                  return (
-                    <Link
-                      key={label}
-                      href={href || "#"}
-                      className='flex items-center gap-3 text-gray-700'
-                    >
-                      <Icon className='w-5 h-5' />
-                      {label}
-                    </Link>
-                  );
-                })}
-
-              {currentUser && (
-                <>
-                  <div className='flex items-center gap-3 text-gray-700'>
-                    <span className='w-6 h-6 rounded-full bg-gray-300 flex items-center justify-center text-white text-sm'>
-                      {currentUser.displayName?.charAt(0)?.toUpperCase() || "U"}
-                    </span>
-                    {currentUser.displayName?.split(" ")[0] || "Profile"}
-                  </div>
-                  <Link
-                    href='/dashboard'
-                    className='flex items-center gap-3 text-gray-700'
-                  >
-                    <LayoutDashboard className='w-5 h-5' />
-                    Dashboard
-                  </Link>
-                  <button
-                    onClick={handleLogout}
-                    className='flex items-center gap-3 text-gray-700 w-full text-left'
-                  >
-                    <LogOut className='w-5 h-5' />
-                    Logout
-                  </button>
-                </>
-              )}
+                  <Listbox.Options className='absolute mt-1 w-40 bg-white text-gray-800 shadow-lg rounded z-10'>
+                    {locations.map((loc) => (
+                      <Listbox.Option key={loc.id} value={loc}>
+                        {({ selected, active }) => (
+                          <div
+                            className={`cursor-pointer px-3 py-2 ${
+                              active ? "bg-primary/10" : ""
+                            }`}
+                          >
+                            <span className={selected ? "font-semibold" : ""}>
+                              {loc.name}
+                            </span>
+                          </div>
+                        )}
+                      </Listbox.Option>
+                    ))}
+                  </Listbox.Options>
+                </Transition>
+              </Listbox>
             </div>
 
-            {/* Divider and Nav Links */}
-            <hr className='my-4 border-gray-300' />
-            <ul className='flex flex-col gap-3 text-sm'>
-              <li>
-                <Link
+            <div className='flex-1 mx-6'>
+              <input
+                type='text'
+                placeholder='What are you looking for?'
+                className='w-full h-10 px-4 rounded bg-white text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary'
+              />
+            </div>
+
+            <div className='flex items-center space-x-4'>
+              {user ? (
+                <HeadlessMenu
+                  as='div'
+                  className='relative inline-block text-left'
+                >
+                  <HeadlessMenu.Button className='flex items-center space-x-1 text-sm hover:underline'>
+                    <User className='h-5 w-5' />
+                    <span>Hi, {getDisplayName()}</span>
+                    <ChevronDown className='h-4 w-4' />
+                  </HeadlessMenu.Button>
+                  <Transition
+                    as={Fragment}
+                    enter='transition ease-out duration-100'
+                    enterFrom='opacity-0 scale-95'
+                    enterTo='opacity-100 scale-100'
+                    leave='transition ease-in duration-75'
+                    leaveFrom='opacity-100 scale-100'
+                    leaveTo='opacity-0 scale-95'
+                  >
+                    <HeadlessMenu.Items className='absolute right-0 mt-2 w-40 bg-white text-gray-800 shadow-lg rounded z-10'>
+                      <HeadlessMenu.Item>
+                        {({ active }) => (
+                          <a
+                            href={dashboardPath}
+                            className={`block px-4 py-2 text-sm ${
+                              active ? "bg-primary/10 text-primary" : ""
+                            }`}
+                          >
+                            My Dashboard
+                          </a>
+                        )}
+                      </HeadlessMenu.Item>
+                      <HeadlessMenu.Item>
+                        {({ active }) => (
+                          <button
+                            onClick={handleLogout}
+                            className={`w-full text-left block px-4 py-2 text-sm ${
+                              active ? "bg-primary/10 text-primary" : ""
+                            }`}
+                          >
+                            Logout
+                          </button>
+                        )}
+                      </HeadlessMenu.Item>
+                    </HeadlessMenu.Items>
+                  </Transition>
+                </HeadlessMenu>
+              ) : (
+                <button
+                  className='flex items-center space-x-1 text-sm hover:underline'
+                  onClick={() => (window.location.href = "/login")}
+                >
+                  <User className='h-5 w-5' />
+                  <span>Log in</span>
+                </button>
+              )}
+
+              {!user?.role && (
+                <a
                   href='/signup'
-                  className='text-gray-700 hover:text-blue-600'
+                  className='inline-block bg-white text-primary font-semibold text-sm px-3 py-1 rounded hover:bg-gray-100 transition'
                 >
                   Become a Supplier
-                </Link>
-              </li>
-              <li>
-                <span className='text-gray-700'>Request for Quotation</span>
-              </li>
-              <li>
-                <span className='text-gray-700'>Get App</span>
-              </li>
-              <li>
-                <span className='text-gray-700'>New Arrivals</span>
-              </li>
-            </ul>
+                </a>
+              )}
+
+              <button className='hover:text-red-400'>
+                <Heart className='h-5 w-5' />
+              </button>
+
+              <button className='relative hover:text-gray-200'>
+                <ShoppingCart className='h-5 w-5' />
+                <span className='absolute -top-1 -right-2 bg-red-600 text-white text-xs rounded-full px-1'>
+                  3
+                </span>
+              </button>
+            </div>
           </div>
         </div>
-      )}
-    </header>
-  );
-};
+      </header>
 
-export default Header;
+      <nav className='bg-white border-t'>
+        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+          <ul className='flex space-x-6 overflow-x-auto py-2'>
+            {/* All Suppliers */}
+            <li className='whitespace-nowrap'>
+              <HeadlessMenu
+                as='div'
+                className='relative inline-block text-left'
+              >
+                <HeadlessMenu.Button className='inline-flex items-center text-sm font-bold text-primary hover:underline'>
+                  All Suppliers
+                  <ChevronDown className='h-4 w-4 ml-1' />
+                </HeadlessMenu.Button>
+                <Transition
+                  as={Fragment}
+                  enter='transition ease-out duration-100'
+                  enterFrom='opacity-0 scale-95'
+                  enterTo='opacity-100 scale-100'
+                  leave='transition ease-in duration-75'
+                  leaveFrom='opacity-100 scale-100'
+                  leaveTo='opacity-0 scale-95'
+                >
+                  <HeadlessMenu.Items className='absolute mt-2 w-48 bg-white shadow-lg rounded z-10'>
+                    {suppliers.map((sup) => (
+                      <HeadlessMenu.Item key={sup}>
+                        {({ active }) => (
+                          <a
+                            href='#'
+                            className={`block px-4 py-2 text-sm ${
+                              active
+                                ? "bg-primary/10 text-primary"
+                                : "text-gray-700"
+                            }`}
+                          >
+                            {sup}
+                          </a>
+                        )}
+                      </HeadlessMenu.Item>
+                    ))}
+                  </HeadlessMenu.Items>
+                </Transition>
+              </HeadlessMenu>
+            </li>
+
+            {/* All Categories */}
+            <li className='whitespace-nowrap'>
+              <HeadlessMenu
+                as='div'
+                className='relative inline-block text-left'
+              >
+                <HeadlessMenu.Button className='inline-flex items-center text-sm font-bold text-primary hover:underline'>
+                  All Categories
+                  <ChevronDown className='h-4 w-4 ml-1' />
+                </HeadlessMenu.Button>
+                <Transition
+                  as={Fragment}
+                  enter='transition ease-out duration-100'
+                  enterFrom='opacity-0 scale-95'
+                  enterTo='opacity-100 scale-100'
+                  leave='transition ease-in duration-75'
+                  leaveFrom='opacity-100 scale-100'
+                  leaveTo='opacity-0 scale-95'
+                >
+                  <HeadlessMenu.Items className='absolute mt-2 w-48 bg-white shadow-lg rounded z-10'>
+                    {categoriesList.map((cat) => (
+                      <HeadlessMenu.Item key={cat}>
+                        {({ active }) => (
+                          <a
+                            href='#'
+                            className={`block px-4 py-2 text-sm ${
+                              active
+                                ? "bg-primary/10 text-primary"
+                                : "text-gray-700"
+                            }`}
+                          >
+                            {cat}
+                          </a>
+                        )}
+                      </HeadlessMenu.Item>
+                    ))}
+                  </HeadlessMenu.Items>
+                </Transition>
+              </HeadlessMenu>
+            </li>
+
+            {/* Other categories */}
+            {categoriesList.map((cat) => (
+              <li key={cat} className='whitespace-nowrap'>
+                <a
+                  href='#'
+                  className='text-sm text-gray-700 hover:text-primary'
+                >
+                  {cat}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </nav>
+    </>
+  );
+}

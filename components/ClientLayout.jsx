@@ -1,6 +1,6 @@
 "use client";
 
-import Providers from "@/app/providers";
+import Providers from "@/app/AppProviders";
 import Header from "./Header";
 import Footer from "./Footer";
 import LayoutWrapper from "./LayoutWrapper"; // 👈 Import wrapper
