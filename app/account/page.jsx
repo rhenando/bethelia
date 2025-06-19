@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   User,
   Pencil,
@@ -15,12 +15,58 @@ import {
   LifeBuoy,
   MailQuestion,
 } from "lucide-react";
+import { useSelector } from "react-redux";
+import { db } from "@/lib/firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 export default function AccountPage() {
-  const user = {
-    name: "Hala Fernando",
-    email: "rdasho11@gmail.com",
-  };
+  const authUser = useSelector((state) => state.auth.user);
+
+  const [user, setUser] = useState({
+    displayName: "",
+    phone: "",
+    role: "",
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!authUser?.uid) return;
+
+    setLoading(true);
+    getDoc(doc(db, "users", authUser.uid))
+      .then((snap) => {
+        if (snap.exists()) {
+          const profile = snap.data();
+          setUser({
+            displayName: profile.displayName || "",
+            phone: profile.phone || "",
+            role: profile.role || "",
+          });
+        }
+      })
+      .finally(() => setLoading(false));
+  }, [authUser]);
+
+  // Use displayName if available, else fallback to phone, else "User"
+  const displayName =
+    user.displayName && user.displayName.trim()
+      ? user.displayName
+      : user.phone
+      ? user.phone
+      : "User";
+
+  // Optional: derive initials from displayName or phone
+  const initials = displayName
+    .replace(/[^A-Z0-9]/gi, " ")
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+
+  // You can add more fields here if needed (role, createdAt, etc.)
+
+  // ...quickActions and accountLinks remain the same as previous message
 
   const quickActions = [
     {
@@ -36,7 +82,7 @@ export default function AccountPage() {
       href: "/returns",
     },
     {
-      label: "Credits",
+      label: "Products",
       icon: <CreditCard className='h-5 w-5 text-[var(--primary)]' />,
       subtitle: "₱ 0.00",
       href: "/credits",
@@ -78,21 +124,31 @@ export default function AccountPage() {
       <div className='p-4'>
         <div className='bg-white rounded-xl shadow flex items-center p-4 gap-4'>
           <div className='flex items-center justify-center h-14 w-14 rounded-full bg-[var(--muted)] text-[var(--primary)] font-bold text-xl'>
-            {user.name
-              .split(" ")
-              .map((n) => n[0])
-              .join("")
-              .slice(0, 2)}
+            {initials}
           </div>
           <div className='flex-1'>
-            <div className='font-bold text-lg text-gray-900'>{user.name}</div>
-            <div className='text-gray-500 text-sm'>{user.email}</div>
+            <div className='font-bold text-lg text-gray-900'>
+              {loading ? (
+                <span className='animate-pulse bg-gray-100 w-24 h-6 rounded'></span>
+              ) : (
+                displayName
+              )}
+            </div>
+            {/* Show phone if not already in displayName */}
+            {user.phone && displayName !== user.phone && (
+              <div className='text-gray-500 text-sm'>{user.phone}</div>
+            )}
+            {/* Show role for reference, optional */}
+            {user.role && (
+              <div className='text-gray-400 text-xs mt-1 capitalize'>
+                {user.role}
+              </div>
+            )}
           </div>
           <button className='ml-2 flex items-center gap-1 px-3 py-1 rounded-full border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50'>
             Edit <Pencil className='h-4 w-4' />
           </button>
         </div>
-        {/* (Promo/Membership) */}
         <div className='bg-white rounded-xl mt-4 flex items-center justify-between p-4'>
           <span className='text-gray-500 font-semibold text-sm'>
             Welcome to your account!
@@ -121,17 +177,6 @@ export default function AccountPage() {
           </a>
         ))}
       </div>
-
-      {/* Banner - optional */}
-      {/* <div className="px-4 mt-4">
-        <div className="rounded-xl overflow-hidden">
-          <img
-            src="/your-brand-banner.png"
-            alt="Banner"
-            className="w-full h-28 object-cover"
-          />
-        </div>
-      </div> */}
 
       {/* My Account Section */}
       <div className='mt-6 px-4'>
