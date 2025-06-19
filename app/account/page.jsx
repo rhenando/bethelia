@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import {
   User,
   Pencil,
-  Package,
   RotateCcw,
   CreditCard,
   Heart,
@@ -16,14 +15,19 @@ import {
   MailQuestion,
   Boxes,
   ClipboardList,
+  LogOut,
 } from "lucide-react";
 
-import { useSelector } from "react-redux";
-import { db } from "@/lib/firebase";
+import { useSelector, useDispatch } from "react-redux";
+import { db, auth } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
+import { signOut } from "firebase/auth";
+import { clearUser } from "@/store/authSlice";
+import QuickActionCard from "@/components/mobile/QuickActionCard";
 
 export default function AccountPage() {
   const authUser = useSelector((state) => state.auth.user);
+  const dispatch = useDispatch();
 
   const [user, setUser] = useState({
     displayName: "",
@@ -67,10 +71,7 @@ export default function AccountPage() {
     .slice(0, 2)
     .toUpperCase();
 
-  // You can add more fields here if needed (role, createdAt, etc.)
-
-  // ...quickActions and accountLinks remain the same as previous message
-
+  // Quick actions for dashboard
   const quickActions = [
     {
       label: "Products",
@@ -127,6 +128,17 @@ export default function AccountPage() {
     },
   ];
 
+  // Logout handler
+  const handleLogout = async () => {
+    try {
+      await signOut(auth); // Firebase logout
+    } catch (e) {
+      // Optionally: show a toast/error message
+    }
+    dispatch(clearUser());
+    window.location.href = "/login"; // Or use router.push("/login") if you want
+  };
+
   return (
     <div className='bg-[var(--muted)] pb-24 min-h-screen'>
       {/* Profile Card */}
@@ -175,15 +187,14 @@ export default function AccountPage() {
       {/* Quick Actions */}
       <div className='px-4 mt-2 grid grid-cols-2 gap-4'>
         {quickActions.map((action) => (
-          <a
+          <QuickActionCard
             key={action.label}
+            label={action.label}
+            icon={action.icon}
+            subtitle={action.subtitle}
             href={action.href}
-            className='bg-white rounded-xl p-4 flex flex-col gap-2 items-start shadow hover:shadow-md transition'
-          >
-            {action.icon}
-            <span className='font-bold text-gray-900'>{action.label}</span>
-            <span className='text-xs text-gray-500'>{action.subtitle}</span>
-          </a>
+            count={action.count}
+          />
         ))}
       </div>
 
@@ -203,6 +214,17 @@ export default function AccountPage() {
             </a>
           ))}
         </div>
+      </div>
+
+      {/* Logout Button */}
+      <div className='mt-6 px-4'>
+        <button
+          onClick={handleLogout}
+          className='w-full bg-red-50 hover:bg-red-100 text-red-600 font-semibold py-3 rounded-xl flex items-center justify-center gap-2 shadow transition'
+        >
+          <LogOut className='h-5 w-5' />
+          Log out
+        </button>
       </div>
 
       {/* Floating Help Button */}
