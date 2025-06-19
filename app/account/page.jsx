@@ -14,7 +14,10 @@ import {
   QrCode,
   LifeBuoy,
   MailQuestion,
+  Boxes,
+  ClipboardList,
 } from "lucide-react";
+
 import { useSelector } from "react-redux";
 import { db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
@@ -70,8 +73,14 @@ export default function AccountPage() {
 
   const quickActions = [
     {
+      label: "Products",
+      icon: <Boxes className='h-5 w-5 text-[var(--primary)]' />,
+      subtitle: "View your products",
+      href: "/products",
+    },
+    {
       label: "Orders",
-      icon: <Package className='h-5 w-5 text-[var(--primary)]' />,
+      icon: <ClipboardList className='h-5 w-5 text-[var(--primary)]' />,
       subtitle: "Manage & track",
       href: "/orders",
     },
@@ -82,7 +91,7 @@ export default function AccountPage() {
       href: "/returns",
     },
     {
-      label: "Products",
+      label: "Credits",
       icon: <CreditCard className='h-5 w-5 text-[var(--primary)]' />,
       subtitle: "₱ 0.00",
       href: "/credits",
