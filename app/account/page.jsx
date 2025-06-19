@@ -62,7 +62,7 @@ export default function AccountPage() {
       ? user.phone
       : "User";
 
-  // Optional: derive initials from displayName or phone
+  // Initials helper
   const initials = displayName
     .replace(/[^A-Z0-9]/gi, " ")
     .split(" ")
@@ -71,14 +71,19 @@ export default function AccountPage() {
     .slice(0, 2)
     .toUpperCase();
 
-  // Quick actions for dashboard
-  const quickActions = [
-    {
+  // Quick actions for dashboard (Products only for supplier)
+  const quickActions = [];
+
+  if (user.role === "supplier") {
+    quickActions.push({
       label: "Products",
       icon: <Boxes className='h-5 w-5 text-[var(--primary)]' />,
       subtitle: "View your products",
       href: "/products",
-    },
+    });
+  }
+
+  quickActions.push(
     {
       label: "Orders",
       icon: <ClipboardList className='h-5 w-5 text-[var(--primary)]' />,
@@ -102,8 +107,8 @@ export default function AccountPage() {
       icon: <Heart className='h-5 w-5 text-[var(--primary)]' />,
       subtitle: "26 saved items",
       href: "/wishlist",
-    },
-  ];
+    }
+  );
 
   const accountLinks = [
     {
@@ -136,7 +141,7 @@ export default function AccountPage() {
       // Optionally: show a toast/error message
     }
     dispatch(clearUser());
-    window.location.href = "/login"; // Or use router.push("/login") if you want
+    window.location.href = "/login"; // Or use router.push("/login")
   };
 
   return (

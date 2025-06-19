@@ -51,9 +51,12 @@ export default function MobileLoginPage() {
   // After login, redirect by user role
   const redirectByRole = (role) => {
     if (role === "supplier") {
-      router.push("/supplier-dashboard");
+      router.push("/account"); // <-- to /account, not /supplier-dashboard
+    } else if (role === "buyer") {
+      router.push("/"); // <-- to home, not /buyer-dashboard
     } else {
-      router.push("/buyer-dashboard");
+      // fallback if role is something else
+      router.push("/");
     }
   };
 
