@@ -166,34 +166,31 @@ export default function MobileLoginPage() {
         </h2>
         {stage === "phone" ? (
           <>
-            <div className='flex gap-2 px-4 mb-4'>
-              <select
-                value={countryCode}
-                onChange={(e) => setCountryCode(e.target.value)}
-                className='border rounded px-3 py-3 bg-white w-28'
-              >
-                <option value='+63'>🇵🇭 (+63)</option>
-                <option value='+966'>🇸🇦 (+966)</option>
-                <option value='+971'>🇦🇪 (+971)</option>
-              </select>
+            <div className='flex px-4 mb-4'>
+              {/* Prefix box - styled to match the input */}
+              <span className='inline-flex items-center px-3 border border-r-0 border-gray-300 rounded-l-md bg-white text-gray-500 text-lg'>
+                🇵🇭 (+63)
+              </span>
+              {/* Input - with no left rounded corners */}
               <div className='relative flex-1'>
                 <Input
                   type='tel'
-                  placeholder='512345678'
+                  placeholder='9XXXXXXXXX'
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className='pl-4 pr-10 py-3 text-lg'
+                  className='block w-full border border-gray-300 rounded-r-md rounded-l-none bg-white text-lg pl-4 pr-10 py-3 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition'
                 />
                 <Phone className='w-5 h-5 absolute right-3 top-1/2 -translate-y-1/2 text-gray-400' />
               </div>
             </div>
+
             <div className='px-4'>
               <Button
                 className='w-full h-12 text-lg'
                 disabled={loading}
                 onClick={handleSendOtp}
               >
-                {loading ? "Sending OTP…" : "Send OTP & Login"}
+                {loading ? "Sending OTP…" : "Login"}
               </Button>
               <div className='flex items-center gap-2 text-sm text-muted-foreground mt-6 mb-6'>
                 <Separator className='flex-1' />
@@ -248,7 +245,7 @@ export default function MobileLoginPage() {
                 disabled={loading}
                 onClick={handleVerifyOtp}
               >
-                {loading ? "Verifying…" : "Verify OTP & Login"}
+                {loading ? "Verifying…" : "Enter OTP"}
               </Button>
             </div>
           </>
