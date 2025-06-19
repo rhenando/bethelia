@@ -159,8 +159,8 @@ export default function MobileLoginPage() {
 
   // UI
   return (
-    <div className='md:hidden min-h-screen w-full flex flex-col justify-center items-center bg-gray-50'>
-      <div className='w-full max-w-none'>
+    <div className='fixed md:hidden inset-x-0 top-0 bottom-14 bg-gray-50 flex flex-col justify-center items-center z-30'>
+      <div className='w-full'>
         <h2 className='text-2xl font-bold text-center mb-8'>
           {stage === "phone" ? "Log in to your Account" : "Enter OTP"}
         </h2>
