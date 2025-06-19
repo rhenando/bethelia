@@ -36,6 +36,26 @@ export default function AccountPage() {
   });
   const [loading, setLoading] = useState(true);
 
+  const [showHelp, setShowHelp] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // Document scroll position
+      const scrollTop = window.scrollY;
+      // Document height minus viewport height
+      const docHeight = document.body.scrollHeight - window.innerHeight;
+      // Scroll percent (guard against division by zero)
+      const scrollPercent = docHeight > 0 ? scrollTop / docHeight : 0;
+      setShowHelp(scrollPercent >= 0.2); // 0.2 = 20%
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    // Run once to set initial state
+    handleScroll();
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   useEffect(() => {
     if (!authUser?.uid) return;
 
@@ -232,14 +252,15 @@ export default function AccountPage() {
         </button>
       </div>
 
-      {/* Floating Help Button */}
-      <a
-        href='/help'
-        className='fixed bottom-20 right-5 bg-[var(--primary)] hover:bg-[var(--primary-foreground)] text-white font-bold px-5 py-3 rounded-full flex items-center gap-2 shadow z-50'
-      >
-        <MailQuestion className='h-5 w-5' />
-        <span>Need Help?</span>
-      </a>
+      {showHelp && (
+        <a
+          href='/help'
+          className='fixed bottom-12 right-5 bg-[var(--primary)] hover:bg-[var(--primary-foreground)] text-white font-bold px-5 py-3 rounded-full flex items-center gap-2 shadow z-50'
+        >
+          <MailQuestion className='h-5 w-5' />
+          <span>Need Help?</span>
+        </a>
+      )}
     </div>
   );
 }

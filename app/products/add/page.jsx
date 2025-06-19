@@ -28,6 +28,11 @@ export default function AddProduct() {
     length: "",
     width: "",
     height: "",
+    // Make sure priceTiers and stock are always arrays/numbers!
+    priceTiers: [{ minQty: 1, price: "" }],
+    stock: "",
+    sku: "",
+    barcode: "",
   });
 
   // Product images (main gallery)
@@ -185,32 +190,40 @@ export default function AddProduct() {
         })
       );
 
+      // Defensive: Ensure priceTiers is always an array
+      const priceTiers =
+        Array.isArray(form.priceTiers) && form.priceTiers.length > 0
+          ? form.priceTiers
+              .filter((t) => t && t.price !== "" && t.minQty !== "")
+              .map((t) => ({
+                minQty: t.minQty !== "" ? Number(t.minQty) : 1,
+                price: t.price !== "" ? Number(t.price) : 0,
+              }))
+          : [];
+
       // --- Firestore save ---
       await addDoc(collection(db, "products"), {
         ...form,
-        price: undefined, // price is now per variant
+        category: form.category,
+        tags: form.tags,
+        price: form.price !== "" ? Number(form.price) : 0,
+        priceTiers,
+        stock: form.stock !== "" ? Number(form.stock) : 0,
         images: mainImageUrls,
         mainImage: mainImageUrls[0],
         variants: variantsWithUrls,
         supplierId: authUser.uid,
         createdAt: serverTimestamp(),
+        status: form.status,
+        sku: form.sku || "",
+        barcode: form.barcode || "",
+        weight: form.weight !== "" ? Number(form.weight) : 0,
+        length: form.length !== "" ? Number(form.length) : 0,
+        width: form.width !== "" ? Number(form.width) : 0,
+        height: form.height !== "" ? Number(form.height) : 0,
       });
 
       toast.success("Product added!");
-      // Reset form
-      setForm({
-        name: "",
-        description: "",
-        category: "",
-        tags: [],
-        status: "active",
-        shippingClass: "",
-        images: [],
-        weight: "",
-        length: "",
-        width: "",
-        height: "",
-      });
       setMainImages([]);
       setMainPreviews([]);
       setVariants([
@@ -229,6 +242,23 @@ export default function AddProduct() {
           height: "",
         },
       ]);
+      setForm({
+        name: "",
+        description: "",
+        category: "",
+        tags: [],
+        status: "active",
+        shippingClass: "",
+        images: [],
+        weight: "",
+        length: "",
+        width: "",
+        height: "",
+        priceTiers: [{ minQty: 1, price: "" }],
+        stock: "",
+        sku: "",
+        barcode: "",
+      });
     } catch (err) {
       toast.error("Failed to add product.");
       console.error(err);
