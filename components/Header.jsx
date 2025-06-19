@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { ChevronDown, User, Heart, ShoppingCart } from "lucide-react";
 import { Listbox, Menu as HeadlessMenu, Transition } from "@headlessui/react";
 import { clearUser } from "@/store/authSlice";
+import MobileHeader from "./mobile/MobileHeader";
 
 // Philippine locations
 const defaultLocations = [
@@ -71,7 +72,7 @@ export default function Header() {
 
   return (
     <>
-      <header>
+      <header className='hidden md:block'>
         <div className='bg-primary text-white'>
           <div className='max-w-7xl mx-auto flex items-center h-14 px-4 sm:px-6 lg:px-8'>
             <div className='flex-shrink-0 text-2xl font-bold'>Bethelia</div>
@@ -199,7 +200,7 @@ export default function Header() {
         </div>
       </header>
 
-      <nav className='bg-white border-t'>
+      <nav className='bg-white border-t hidden md:block'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <ul className='flex space-x-6 overflow-x-auto py-2'>
             {/* All Suppliers */}
@@ -298,6 +299,8 @@ export default function Header() {
           </ul>
         </div>
       </nav>
+
+      <MobileHeader />
     </>
   );
 }
