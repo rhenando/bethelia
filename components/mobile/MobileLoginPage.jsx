@@ -159,7 +159,7 @@ export default function MobileLoginPage() {
 
   // UI
   return (
-    <div className='fixed md:hidden inset-x-0 top-0 bottom-14 bg-gray-50 flex flex-col justify-center items-center z-30'>
+    <div className='fixed inset-0 bg-gray-50 flex flex-col justify-center items-center md:hidden overflow-hidden z-50'>
       <div className='w-full'>
         <h2 className='text-2xl font-bold text-center mb-8'>
           {stage === "phone" ? "Log in to your Account" : "Enter OTP"}
