@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { db, storage } from "@/lib/firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
@@ -9,252 +9,262 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import Image from "next/image";
+import { useDropzone } from "react-dropzone";
 
+// --- Main Component ---
 export default function AddProduct() {
   const authUser = useSelector((state) => state.auth.user);
 
-  // Example category list
+  // Main form fields
+  const [form, setForm] = useState({
+    name: "",
+    description: "",
+    category: "",
+    tags: [],
+    status: "active",
+    shippingClass: "",
+    images: [],
+    weight: "",
+    length: "",
+    width: "",
+    height: "",
+  });
+
+  // Product images (main gallery)
+  const [mainImages, setMainImages] = useState([]);
+  const [mainPreviews, setMainPreviews] = useState([]);
+
+  // Variants
+  const [variants, setVariants] = useState([
+    {
+      sku: "",
+      barcode: "",
+      option1: "", // e.g. Color
+      option2: "", // e.g. Size
+      price: "",
+      stock: "",
+      image: null,
+      imagePreview: null,
+      weight: "",
+      length: "",
+      width: "",
+      height: "",
+    },
+  ]);
+
+  const [saving, setSaving] = useState(false);
+
+  // Category and shipping class options
   const categoryOptions = [
     "Electronics",
     "Fashion",
     "Home & Kitchen",
     "Toys",
     "Beauty",
-    "Others",
+    "Books",
+  ];
+  const shippingClassOptions = [
+    "Standard",
+    "Fragile",
+    "Bulky",
+    "Liquid",
+    "Other",
   ];
 
-  const [form, setForm] = useState({
-    name: "",
-    description: "",
-    category: "",
-    price: "",
-    priceTiers: [{ minQty: 1, price: "" }],
-    stock: "",
-    imageUrl: "", // Will become downloadURL after upload
-    additionalImages: [],
-    shippingMethods: [{ method: "", cost: "", deliveryTime: "" }],
-    attributes: [{ name: "", value: "" }],
+  // --- Main image dropzone
+  const onMainDrop = (acceptedFiles) => {
+    const previews = acceptedFiles.map((file) => URL.createObjectURL(file));
+    setMainImages((prev) => [...prev, ...acceptedFiles]);
+    setMainPreviews((prev) => [...prev, ...previews]);
+  };
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    accept: { "image/*": [] },
+    onDrop: onMainDrop,
+    multiple: true,
+    maxFiles: 8,
   });
-  const [mainImageFile, setMainImageFile] = useState(null);
-  const [mainImagePreview, setMainImagePreview] = useState("");
-  const [mainImageUploading, setMainImageUploading] = useState(false);
 
-  const [additionalImageFiles, setAdditionalImageFiles] = useState([]);
-  const [additionalImagePreviews, setAdditionalImagePreviews] = useState([]);
-  const [additionalImagesUploading, setAdditionalImagesUploading] = useState(
-    [] // tracks progress for each
-  );
-
-  const [loading, setLoading] = useState(false);
-
-  // ---- HANDLERS ----
-
-  // General input
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  // Main Image File Input
-  const handleMainImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setMainImageFile(file);
-      setMainImagePreview(URL.createObjectURL(file));
-    }
-  };
-
-  // Additional Images (multi-file upload)
-  const handleAdditionalImagesChange = (e) => {
-    const files = Array.from(e.target.files);
-    setAdditionalImageFiles(files);
-    setAdditionalImagePreviews(files.map((f) => URL.createObjectURL(f)));
-  };
-
-  // Price Tiers
-  const handleTierChange = (idx, field, value) => {
-    const updated = form.priceTiers.map((t, i) =>
-      i === idx ? { ...t, [field]: value } : t
+  // --- Variant image upload
+  const handleVariantImage = (idx, file) => {
+    const preview = file ? URL.createObjectURL(file) : null;
+    setVariants((prev) =>
+      prev.map((v, i) =>
+        i === idx ? { ...v, image: file, imagePreview: preview } : v
+      )
     );
-    setForm((f) => ({ ...f, priceTiers: updated }));
   };
-  const addPriceTier = () =>
-    setForm((f) => ({
-      ...f,
-      priceTiers: [...f.priceTiers, { minQty: "", price: "" }],
-    }));
-  const removePriceTier = (idx) =>
-    setForm((f) => ({
-      ...f,
-      priceTiers: f.priceTiers.filter((_, i) => i !== idx),
-    }));
 
-  // Shipping
-  const handleShippingChange = (idx, field, value) => {
-    const updated = form.shippingMethods.map((s, i) =>
-      i === idx ? { ...s, [field]: value } : s
+  // --- Variant change handlers
+  const handleVariantChange = (idx, field, value) => {
+    setVariants((prev) =>
+      prev.map((v, i) => (i === idx ? { ...v, [field]: value } : v))
     );
-    setForm((f) => ({ ...f, shippingMethods: updated }));
-  };
-  const addShippingMethod = () =>
-    setForm((f) => ({
-      ...f,
-      shippingMethods: [
-        ...f.shippingMethods,
-        { method: "", cost: "", deliveryTime: "" },
-      ],
-    }));
-  const removeShippingMethod = (idx) =>
-    setForm((f) => ({
-      ...f,
-      shippingMethods: f.shippingMethods.filter((_, i) => i !== idx),
-    }));
-
-  // Attributes
-  const handleAttrChange = (idx, field, value) => {
-    const updated = form.attributes.map((a, i) =>
-      i === idx ? { ...a, [field]: value } : a
-    );
-    setForm((f) => ({ ...f, attributes: updated }));
-  };
-  const addAttribute = () =>
-    setForm((f) => ({
-      ...f,
-      attributes: [...f.attributes, { name: "", value: "" }],
-    }));
-  const removeAttribute = (idx) =>
-    setForm((f) => ({
-      ...f,
-      attributes: f.attributes.filter((_, i) => i !== idx),
-    }));
-
-  // ---- IMAGE UPLOAD HELPERS ----
-
-  // Returns a Promise with the download URL
-  const uploadImage = (file, path) => {
-    return new Promise((resolve, reject) => {
-      const storageRef = ref(storage, path);
-      const uploadTask = uploadBytesResumable(storageRef, file);
-      uploadTask.on(
-        "state_changed",
-        null,
-        (err) => reject(err),
-        async () => {
-          const url = await getDownloadURL(uploadTask.snapshot.ref);
-          resolve(url);
-        }
-      );
-    });
   };
 
-  // ---- SUBMIT ----
+  // --- Add/Remove variants
+  const addVariant = () =>
+    setVariants((prev) => [
+      ...prev,
+      {
+        sku: "",
+        barcode: "",
+        option1: "",
+        option2: "",
+        price: "",
+        stock: "",
+        image: null,
+        imagePreview: null,
+        weight: "",
+        length: "",
+        width: "",
+        height: "",
+      },
+    ]);
+  const removeVariant = (idx) =>
+    setVariants((prev) => prev.filter((_, i) => i !== idx));
+
+  // --- Remove main image
+  const handleRemoveMainImage = (idx) => {
+    setMainImages((prev) => prev.filter((_, i) => i !== idx));
+    setMainPreviews((prev) => prev.filter((_, i) => i !== idx));
+  };
+
+  // --- Handle submit ---
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!form.name || !form.price || !form.category) {
-      toast.error("Name, price, and category are required.");
+    if (!form.name || !form.category) {
+      toast.error("Product name and category required.");
       return;
     }
     if (!authUser?.uid) {
-      toast.error("Please login as a supplier.");
+      toast.error("Login as supplier to add products.");
       return;
     }
-    if (!mainImageFile) {
-      toast.error("Please upload a main image.");
+    if (mainImages.length === 0) {
+      toast.error("Please upload at least one product image.");
       return;
     }
-
-    setLoading(true);
+    setSaving(true);
 
     try {
-      // 1. Upload main image
-      setMainImageUploading(true);
-      const mainImageUrl = await uploadImage(
-        mainImageFile,
-        `products/${authUser.uid}/${Date.now()}_main_${mainImageFile.name}`
-      );
-      setMainImageUploading(false);
-
-      // 2. Upload additional images (if any)
-      setAdditionalImagesUploading(additionalImageFiles.map(() => true));
-      let additionalImageUrls = [];
-      if (additionalImageFiles.length > 0) {
-        additionalImageUrls = await Promise.all(
-          additionalImageFiles.map((file, idx) =>
-            uploadImage(
-              file,
-              `products/${authUser.uid}/${Date.now()}_${file.name}`
-            )
-          )
-        );
+      // --- Upload main images ---
+      const mainImageUrls = [];
+      for (let i = 0; i < mainImages.length; ++i) {
+        const file = mainImages[i];
+        const refPath = `products/${authUser.uid}/main_${Date.now()}_${i}_${
+          file.name
+        }`;
+        const storageRef = ref(storage, refPath);
+        const snap = await uploadBytesResumable(storageRef, file);
+        const url = await getDownloadURL(snap.ref);
+        mainImageUrls.push(url);
       }
-      setAdditionalImagesUploading(additionalImageFiles.map(() => false));
 
-      // 3. Save to Firestore
+      // --- Upload variant images (if any) ---
+      const variantsWithUrls = await Promise.all(
+        variants.map(async (variant, idx) => {
+          let imageUrl = "";
+          if (variant.image) {
+            const refPath = `products/${
+              authUser.uid
+            }/variant_${Date.now()}_${idx}_${variant.image.name}`;
+            const storageRef = ref(storage, refPath);
+            const snap = await uploadBytesResumable(storageRef, variant.image);
+            imageUrl = await getDownloadURL(snap.ref);
+          }
+          return {
+            ...variant,
+            price: Number(variant.price || 0),
+            stock: Number(variant.stock || 0),
+            weight: Number(variant.weight || form.weight || 0),
+            length: Number(variant.length || form.length || 0),
+            width: Number(variant.width || form.width || 0),
+            height: Number(variant.height || form.height || 0),
+            image: imageUrl,
+          };
+        })
+      );
+
+      // --- Firestore save ---
       await addDoc(collection(db, "products"), {
         ...form,
-        price: Number(form.price),
-        priceTiers: form.priceTiers.map((t) => ({
-          minQty: Number(t.minQty),
-          price: Number(t.price),
-        })),
-        stock: Number(form.stock || 0),
-        imageUrl: mainImageUrl,
-        additionalImages: additionalImageUrls,
+        price: undefined, // price is now per variant
+        images: mainImageUrls,
+        mainImage: mainImageUrls[0],
+        variants: variantsWithUrls,
         supplierId: authUser.uid,
         createdAt: serverTimestamp(),
       });
 
       toast.success("Product added!");
-      // Reset
+      // Reset form
       setForm({
         name: "",
         description: "",
         category: "",
-        price: "",
-        priceTiers: [{ minQty: 1, price: "" }],
-        stock: "",
-        imageUrl: "",
-        additionalImages: [],
-        shippingMethods: [{ method: "", cost: "", deliveryTime: "" }],
-        attributes: [{ name: "", value: "" }],
+        tags: [],
+        status: "active",
+        shippingClass: "",
+        images: [],
+        weight: "",
+        length: "",
+        width: "",
+        height: "",
       });
-      setMainImageFile(null);
-      setMainImagePreview("");
-      setAdditionalImageFiles([]);
-      setAdditionalImagePreviews([]);
+      setMainImages([]);
+      setMainPreviews([]);
+      setVariants([
+        {
+          sku: "",
+          barcode: "",
+          option1: "",
+          option2: "",
+          price: "",
+          stock: "",
+          image: null,
+          imagePreview: null,
+          weight: "",
+          length: "",
+          width: "",
+          height: "",
+        },
+      ]);
     } catch (err) {
       toast.error("Failed to add product.");
       console.error(err);
     }
-    setLoading(false);
+    setSaving(false);
   };
 
-  // ---- UI ----
+  // --- Render ---
   return (
     <div
-      className='max-w-xl mx-auto p-4 bg-white rounded-xl shadow mt-4 overflow-y-auto'
+      className='max-w-3xl mx-auto p-4 bg-white rounded-xl shadow mt-4 overflow-y-auto'
       style={{ maxHeight: "calc(100vh - 32px)" }}
     >
       <h2 className='text-xl font-bold mb-4'>Add Product</h2>
-      <form onSubmit={handleSubmit} className='space-y-5'>
-        {/* Name, Description, Category */}
+      <form onSubmit={handleSubmit} className='space-y-8'>
+        {/* MAIN INFO */}
         <Input
           name='name'
           placeholder='Product Name'
           value={form.name}
-          onChange={handleChange}
+          onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
         />
         <textarea
           name='description'
           placeholder='Description'
           value={form.description}
-          onChange={handleChange}
+          onChange={(e) =>
+            setForm((f) => ({ ...f, description: e.target.value }))
+          }
           className='w-full border rounded px-3 py-2 min-h-[80px]'
         />
+
         <select
           name='category'
           value={form.category}
-          onChange={handleChange}
+          onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
           className='w-full border rounded px-3 py-2'
         >
           <option value=''>Select Category</option>
@@ -265,210 +275,240 @@ export default function AddProduct() {
           ))}
         </select>
 
-        {/* Price & Price Tiers */}
-        <div>
-          <label className='block mb-1 font-semibold'>Base Price (₱)</label>
+        <select
+          name='shippingClass'
+          value={form.shippingClass}
+          onChange={(e) =>
+            setForm((f) => ({ ...f, shippingClass: e.target.value }))
+          }
+          className='w-full border rounded px-3 py-2'
+        >
+          <option value=''>Shipping Class</option>
+          {shippingClassOptions.map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
+          ))}
+        </select>
+
+        {/* Product-level shipping (default for all variants, can be overridden per variant) */}
+        <div className='grid grid-cols-2 md:grid-cols-4 gap-3'>
           <Input
-            name='price'
+            name='weight'
+            placeholder='Weight (kg)'
             type='number'
-            value={form.price}
-            onChange={handleChange}
             min={0}
+            value={form.weight}
+            onChange={(e) => setForm((f) => ({ ...f, weight: e.target.value }))}
           />
-          <div className='mt-2 mb-2'>
-            <div className='flex justify-between items-center mb-1'>
-              <span className='font-semibold text-sm'>Bulk Price Tiers</span>
-              <button
-                type='button'
-                className='text-primary text-xs'
-                onClick={addPriceTier}
-              >
-                + Add Tier
-              </button>
-            </div>
-            {form.priceTiers.map((tier, i) => (
-              <div key={i} className='flex gap-2 mb-1'>
-                <Input
-                  type='number'
-                  min={1}
-                  placeholder='Min Qty'
-                  value={tier.minQty}
-                  onChange={(e) =>
-                    handleTierChange(i, "minQty", e.target.value)
-                  }
-                />
-                <Input
-                  type='number'
-                  min={0}
-                  placeholder='Tier Price'
-                  value={tier.price}
-                  onChange={(e) => handleTierChange(i, "price", e.target.value)}
-                />
-                {form.priceTiers.length > 1 && (
+          <Input
+            name='length'
+            placeholder='Length (cm)'
+            type='number'
+            min={0}
+            value={form.length}
+            onChange={(e) => setForm((f) => ({ ...f, length: e.target.value }))}
+          />
+          <Input
+            name='width'
+            placeholder='Width (cm)'
+            type='number'
+            min={0}
+            value={form.width}
+            onChange={(e) => setForm((f) => ({ ...f, width: e.target.value }))}
+          />
+          <Input
+            name='height'
+            placeholder='Height (cm)'
+            type='number'
+            min={0}
+            value={form.height}
+            onChange={(e) => setForm((f) => ({ ...f, height: e.target.value }))}
+          />
+        </div>
+
+        {/* MAIN PRODUCT IMAGES */}
+        <div>
+          <label className='block font-semibold mb-1'>Product Images *</label>
+          <div
+            {...getRootProps()}
+            className={`border-2 border-dashed rounded-xl py-8 px-4 text-center bg-gray-50 cursor-pointer transition ${
+              isDragActive ? "border-blue-500 bg-blue-50" : ""
+            }`}
+          >
+            <input {...getInputProps()} />
+            <p className='text-sm text-gray-500'>
+              Drag and drop images here, or click to select up to 8 images.
+            </p>
+            <div className='flex gap-3 mt-4 flex-wrap justify-center'>
+              {mainPreviews.map((src, i) => (
+                <div key={i} className='relative group'>
+                  <Image
+                    src={src}
+                    alt={`Preview ${i + 1}`}
+                    width={90}
+                    height={90}
+                    className='rounded-lg border shadow'
+                    style={{ objectFit: "cover" }}
+                  />
                   <button
                     type='button'
-                    className='text-xs text-red-500'
-                    onClick={() => removePriceTier(i)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRemoveMainImage(i);
+                    }}
+                    className='absolute top-1 right-1 bg-white bg-opacity-60 rounded-full p-1 hover:bg-red-600 hover:text-white transition'
                   >
-                    Remove
+                    ×
                   </button>
-                )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* VARIANTS */}
+        <div>
+          <div className='flex items-center justify-between mb-2'>
+            <span className='font-semibold text-sm'>
+              Variants (e.g. Color/Size)
+            </span>
+            <button
+              type='button'
+              className='text-primary text-xs'
+              onClick={addVariant}
+            >
+              + Add Variant
+            </button>
+          </div>
+          <div className='space-y-4'>
+            {variants.map((variant, i) => (
+              <div
+                key={i}
+                className='border rounded-lg p-3 bg-gray-50 space-y-2'
+              >
+                <div className='grid grid-cols-2 md:grid-cols-4 gap-2'>
+                  <Input
+                    placeholder='Color/Option 1'
+                    value={variant.option1}
+                    onChange={(e) =>
+                      handleVariantChange(i, "option1", e.target.value)
+                    }
+                  />
+                  <Input
+                    placeholder='Size/Option 2'
+                    value={variant.option2}
+                    onChange={(e) =>
+                      handleVariantChange(i, "option2", e.target.value)
+                    }
+                  />
+                  <Input
+                    placeholder='Price'
+                    type='number'
+                    min={0}
+                    value={variant.price}
+                    onChange={(e) =>
+                      handleVariantChange(i, "price", e.target.value)
+                    }
+                  />
+                  <Input
+                    placeholder='Stock'
+                    type='number'
+                    min={0}
+                    value={variant.stock}
+                    onChange={(e) =>
+                      handleVariantChange(i, "stock", e.target.value)
+                    }
+                  />
+                </div>
+                <div className='grid grid-cols-2 md:grid-cols-4 gap-2'>
+                  <Input
+                    placeholder='SKU'
+                    value={variant.sku}
+                    onChange={(e) =>
+                      handleVariantChange(i, "sku", e.target.value)
+                    }
+                  />
+                  <Input
+                    placeholder='Barcode'
+                    value={variant.barcode}
+                    onChange={(e) =>
+                      handleVariantChange(i, "barcode", e.target.value)
+                    }
+                  />
+                  <Input
+                    placeholder='Weight (kg)'
+                    type='number'
+                    min={0}
+                    value={variant.weight}
+                    onChange={(e) =>
+                      handleVariantChange(i, "weight", e.target.value)
+                    }
+                  />
+                  <Input
+                    placeholder='Length (cm)'
+                    type='number'
+                    min={0}
+                    value={variant.length}
+                    onChange={(e) =>
+                      handleVariantChange(i, "length", e.target.value)
+                    }
+                  />
+                  <Input
+                    placeholder='Width (cm)'
+                    type='number'
+                    min={0}
+                    value={variant.width}
+                    onChange={(e) =>
+                      handleVariantChange(i, "width", e.target.value)
+                    }
+                  />
+                  <Input
+                    placeholder='Height (cm)'
+                    type='number'
+                    min={0}
+                    value={variant.height}
+                    onChange={(e) =>
+                      handleVariantChange(i, "height", e.target.value)
+                    }
+                  />
+                </div>
+                <div className='flex items-center gap-3'>
+                  <label className='block font-semibold text-xs'>
+                    Variant Image:
+                  </label>
+                  <input
+                    type='file'
+                    accept='image/*'
+                    onChange={(e) => handleVariantImage(i, e.target.files[0])}
+                  />
+                  {variant.imagePreview && (
+                    <Image
+                      src={variant.imagePreview}
+                      alt='Variant'
+                      width={50}
+                      height={50}
+                      className='rounded border'
+                    />
+                  )}
+                  {variants.length > 1 && (
+                    <button
+                      type='button'
+                      className='text-xs text-red-500 ml-2'
+                      onClick={() => removeVariant(i)}
+                    >
+                      Remove Variant
+                    </button>
+                  )}
+                </div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Stock */}
-        <Input
-          name='stock'
-          placeholder='Stock'
-          type='number'
-          min={0}
-          value={form.stock}
-          onChange={handleChange}
-        />
-
-        {/* Main Image */}
-        <div>
-          <label className='block mb-1 font-semibold'>Main Image</label>
-          <input
-            type='file'
-            accept='image/*'
-            onChange={handleMainImageChange}
-            className='block'
-          />
-          {mainImagePreview && (
-            <Image
-              src={mainImagePreview}
-              alt='Preview'
-              width={80}
-              height={80}
-              className='mt-2 rounded shadow'
-            />
-          )}
-          {mainImageUploading && (
-            <div className='text-xs text-gray-500 mt-1'>Uploading...</div>
-          )}
-        </div>
-
-        {/* Additional Images */}
-        <div>
-          <label className='block mb-1 font-semibold'>Additional Images</label>
-          <input
-            type='file'
-            accept='image/*'
-            multiple
-            onChange={handleAdditionalImagesChange}
-            className='block'
-          />
-          <div className='flex gap-2 flex-wrap mt-2'>
-            {additionalImagePreviews.map((src, i) => (
-              <Image
-                key={i}
-                src={src}
-                alt={`Additional Preview ${i + 1}`}
-                width={60}
-                height={60}
-                className='rounded shadow'
-              />
-            ))}
-          </div>
-          {additionalImagesUploading.some(Boolean) && (
-            <div className='text-xs text-gray-500 mt-1'>Uploading...</div>
-          )}
-        </div>
-
-        {/* Shipping Methods */}
-        <div>
-          <div className='flex justify-between items-center mb-1'>
-            <span className='font-semibold text-sm'>Shipping Methods</span>
-            <button
-              type='button'
-              className='text-primary text-xs'
-              onClick={addShippingMethod}
-            >
-              + Add Method
-            </button>
-          </div>
-          {form.shippingMethods.map((ship, i) => (
-            <div key={i} className='flex gap-2 mb-1'>
-              <Input
-                placeholder='Method'
-                value={ship.method}
-                onChange={(e) =>
-                  handleShippingChange(i, "method", e.target.value)
-                }
-              />
-              <Input
-                type='number'
-                min={0}
-                placeholder='Cost'
-                value={ship.cost}
-                onChange={(e) =>
-                  handleShippingChange(i, "cost", e.target.value)
-                }
-              />
-              <Input
-                type='number'
-                min={0}
-                placeholder='Delivery (days)'
-                value={ship.deliveryTime}
-                onChange={(e) =>
-                  handleShippingChange(i, "deliveryTime", e.target.value)
-                }
-              />
-              {form.shippingMethods.length > 1 && (
-                <button
-                  type='button'
-                  className='text-xs text-red-500'
-                  onClick={() => removeShippingMethod(i)}
-                >
-                  Remove
-                </button>
-              )}
-            </div>
-          ))}
-        </div>
-
-        {/* Attributes (custom properties) */}
-        <div>
-          <div className='flex justify-between items-center mb-1'>
-            <span className='font-semibold text-sm'>Custom Attributes</span>
-            <button
-              type='button'
-              className='text-primary text-xs'
-              onClick={addAttribute}
-            >
-              + Add Attribute
-            </button>
-          </div>
-          {form.attributes.map((attr, i) => (
-            <div key={i} className='flex gap-2 mb-1'>
-              <Input
-                placeholder='Attribute Name'
-                value={attr.name}
-                onChange={(e) => handleAttrChange(i, "name", e.target.value)}
-              />
-              <Input
-                placeholder='Value'
-                value={attr.value}
-                onChange={(e) => handleAttrChange(i, "value", e.target.value)}
-              />
-              {form.attributes.length > 1 && (
-                <button
-                  type='button'
-                  className='text-xs text-red-500'
-                  onClick={() => removeAttribute(i)}
-                >
-                  Remove
-                </button>
-              )}
-            </div>
-          ))}
-        </div>
-
-        <Button type='submit' className='w-full h-12' disabled={loading}>
-          {loading ? "Saving..." : "Add Product"}
+        {/* SUBMIT */}
+        <Button type='submit' className='w-full h-12' disabled={saving}>
+          {saving ? "Saving..." : "Add Product"}
         </Button>
       </form>
     </div>
