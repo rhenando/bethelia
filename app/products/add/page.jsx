@@ -239,7 +239,7 @@ export default function AddProduct() {
   // --- Render ---
   return (
     <div
-      className='max-w-3xl mx-auto p-4 bg-white rounded-xl shadow mt-4 overflow-y-auto'
+      className='max-w-3xl mx-auto p-4 bg-white rounded-xl shadow mt-4 overflow-y-auto pb-10'
       style={{ maxHeight: "calc(100vh - 32px)" }}
     >
       <h2 className='text-xl font-bold mb-4'>Add Product</h2>
