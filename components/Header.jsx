@@ -6,6 +6,7 @@ import { ChevronDown, User, Heart, ShoppingCart } from "lucide-react";
 import { Listbox, Menu as HeadlessMenu, Transition } from "@headlessui/react";
 import { clearUser } from "@/store/authSlice";
 import MobileHeader from "./mobile/MobileHeader";
+import Link from "next/link";
 
 // Philippine locations
 const defaultLocations = [
@@ -75,7 +76,9 @@ export default function Header() {
       <header className='hidden md:block'>
         <div className='bg-primary text-white'>
           <div className='max-w-7xl mx-auto flex items-center h-14 px-4 sm:px-6 lg:px-8'>
-            <div className='flex-shrink-0 text-2xl font-bold'>Bethelia</div>
+            <Link href='/' className='flex-shrink-0 text-2xl font-bold'>
+              Bethelia
+            </Link>
 
             <div className='ml-6 relative'>
               <Listbox value={selectedLocation} onChange={setSelectedLocation}>
