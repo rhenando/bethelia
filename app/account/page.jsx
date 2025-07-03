@@ -135,7 +135,7 @@ export default function AccountPage() {
   };
 
   return (
-    <div className='w-full max-w-full h-[90vh] bg-[var(--muted)] flex flex-col relative overflow-hidden'>
+    <div className='w-full max-w-full min-h-screen bg-[var(--muted)] flex flex-col relative'>
       <div className='flex flex-col h-full w-full'>
         {/* Profile Header */}
         <div className='px-4 pt-4 pb-2'>
@@ -174,7 +174,7 @@ export default function AccountPage() {
               href='#'
               className='flex items-center gap-1 bg-[var(--primary)] text-white font-semibold px-3 py-1 rounded-full text-xs hover:bg-[var(--primary-foreground)] transition'
             >
-              Upgrade
+              Subscribe
               <ChevronRight className='h-4 w-4' />
             </a>
           </div>
