@@ -60,15 +60,12 @@ const recommendations = [
 // MAIN PAGE COMPONENT
 export default function MobileHomePage() {
   return (
-    <>
-      {/* pb-16 ensures nothing is hidden behind nav */}
-      <div className='min-h-screen bg-[var(--background)] flex flex-col pb-16'>
-        <SearchBar />
-        <BannerCarousel />
-        <CategoryScroll />
-        <Recommendations />
-      </div>
-    </>
+    <div className='h-[90vh] bg-[var(--background)] flex flex-col pb-16 md:hidden'>
+      <SearchBar />
+      <BannerCarousel />
+      <CategoryScroll />
+      <Recommendations />
+    </div>
   );
 }
 
