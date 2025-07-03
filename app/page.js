@@ -1,8 +1,9 @@
 "use client";
 import React from "react";
 import { Search, Heart, ShoppingCart } from "lucide-react";
+import MobileBottomNav from "@/components/MobileBottomNav";
 
-// Example Bethelia categories with public image URLs
+// Category and recommendation data
 const categories = [
   {
     label: "Barangay Bazaar",
@@ -57,23 +58,27 @@ const recommendations = [
   },
 ];
 
+// MAIN PAGE COMPONENT
 export default function MobileHomePage() {
   return (
-    <div className='bg-[var(--background)] min-h-screen flex flex-col pb-16'>
-      <HeaderBar />
-      <BannerCarousel />
-      <CategoryScroll />
-      <Recommendations />
-      {/* BottomTabNav is omitted */}
-    </div>
+    <>
+      {/* pb-16 ensures nothing is hidden behind nav */}
+      <div className='min-h-screen bg-[var(--background)] flex flex-col pb-16'>
+        <SearchBar />
+        <BannerCarousel />
+        <CategoryScroll />
+        <Recommendations />
+      </div>
+      <MobileBottomNav />
+    </>
   );
 }
 
-// Header Bar
-function HeaderBar() {
+// MOBILE SEARCH BAR
+function SearchBar() {
   return (
-    <div className='bg-[var(--card)] px-4 py-2 flex items-center gap-3 shadow'>
-      <div className='flex-1 flex items-center bg-[var(--muted)] rounded-lg px-2'>
+    <div className='sticky top-0 z-10 bg-[var(--card)] px-4 py-2 flex items-center gap-3 shadow-sm'>
+      <div className='flex-1 flex items-center bg-[var(--muted)] rounded-lg px-2 py-1'>
         <Search className='h-5 w-5 text-[var(--muted-foreground)]' />
         <input
           type='text'
@@ -81,88 +86,94 @@ function HeaderBar() {
           placeholder='Search Bethelia…'
         />
       </div>
-      <Heart className='h-6 w-6 text-[var(--primary)]' />
-      <div className='relative'>
+      <button className='ml-1 p-2'>
+        <Heart className='h-6 w-6 text-[var(--primary)]' />
+      </button>
+      <button className='relative ml-1 p-2'>
         <ShoppingCart className='h-6 w-6 text-[var(--primary)]' />
-        <span className='absolute -top-2 -right-2 bg-[var(--primary)] text-[var(--primary-foreground)] rounded-full text-xs w-5 h-5 flex items-center justify-center font-bold shadow'>
+        <span className='absolute -top-1.5 -right-1.5 bg-[var(--primary)] text-[var(--primary-foreground)] rounded-full text-xs w-5 h-5 flex items-center justify-center font-bold shadow'>
           2
         </span>
-      </div>
+      </button>
     </div>
   );
 }
 
-// Banner Carousel with sample public images
+// BANNER CAROUSEL
 function BannerCarousel() {
   return (
-    <div className='px-2 pt-3 space-y-2'>
+    <div className='px-3 pt-4 space-y-3'>
       <img
         src='https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=800&q=80'
         alt='Barangay Sale'
-        className='rounded-xl w-full object-cover h-28'
+        className='rounded-2xl w-full object-cover h-32'
+        draggable={false}
       />
       <img
         src='https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=800&q=80'
         alt='Local Heroes Promo'
-        className='rounded-xl w-full object-cover h-20'
+        className='rounded-2xl w-full object-cover h-24'
+        draggable={false}
       />
     </div>
   );
 }
 
-// Categories (Horizontal Scroll)
+// CATEGORY HORIZONTAL SCROLL
 function CategoryScroll() {
   return (
-    <div className='mt-4 px-2 overflow-x-auto'>
-      <div className='flex gap-4 min-w-max'>
-        {categories.map((cat, i) => (
-          <div
+    <section className='mt-4 px-2 overflow-x-auto'>
+      <div className='flex gap-4 min-w-max pb-1'>
+        {categories.map((cat) => (
+          <button
             key={cat.label}
-            className='flex flex-col items-center min-w-[68px] group'
+            className='flex flex-col items-center min-w-[72px] group outline-none focus:ring-2 focus:ring-[var(--primary)]'
           >
-            <div className='w-14 h-14 bg-[var(--card)] rounded-full flex items-center justify-center shadow'>
+            <div className='w-14 h-14 bg-[var(--card)] rounded-full flex items-center justify-center shadow-md mb-1'>
               <img
                 src={cat.icon}
                 alt={cat.label}
                 className='w-8 h-8 object-contain'
+                draggable={false}
               />
             </div>
-            <span className='text-xs text-[var(--muted-foreground)] mt-1 text-center whitespace-nowrap'>
+            <span className='text-xs text-[var(--muted-foreground)] text-center whitespace-nowrap'>
               {cat.label}
             </span>
-          </div>
+          </button>
         ))}
       </div>
-    </div>
+    </section>
   );
 }
 
-// Recommendations Section
+// RECOMMENDATIONS SECTION
 function Recommendations() {
   return (
-    <div className='mt-5 px-4'>
-      <div className='font-semibold text-base mb-2 text-[var(--foreground)]'>
+    <section className='mt-6 px-3'>
+      <div className='font-semibold text-base mb-3 text-[var(--foreground)]'>
         Recommended for you
       </div>
-      <div className='flex gap-2 overflow-x-auto pb-1'>
+      <div className='flex gap-3 overflow-x-auto pb-2'>
         {recommendations.map((rec, i) => (
           <div
             key={i}
-            className='min-w-[140px] bg-[var(--card)] rounded-xl shadow flex flex-col items-center px-3 py-2 mr-2'
+            className='min-w-[150px] bg-[var(--card)] rounded-xl shadow flex flex-col items-center px-3 py-2'
           >
             <img
               src={rec.img}
               alt={rec.label}
               className='w-20 h-20 object-cover mb-2 rounded'
+              draggable={false}
             />
-            <span className='text-xs font-bold bg-[var(--primary)] text-[var(--primary-foreground)] px-2 rounded-full'>
+            <span className='text-xs font-bold bg-[var(--primary)] text-[var(--primary-foreground)] px-3 py-1 rounded-full'>
               {rec.label}
             </span>
           </div>
         ))}
       </div>
-      {/* Promo bar - now filled with a real, bold message */}
-      <div className='mt-3 bg-gradient-to-r from-[#0000ff]/70 to-[#86b7f9]/80 flex items-center justify-between rounded-lg px-3 py-3'>
+      {/* PROMO BAR */}
+      <div className='mt-5 bg-gradient-to-r from-[#2196f3] via-[#a1c4fd] to-[#c2e9fb] flex items-center justify-between rounded-xl px-3 py-4'>
         <div className='flex flex-col'>
           <span className='text-xs text-[var(--card-foreground)] font-bold'>
             🎉 Limited-Time Welcome Promo!
@@ -172,10 +183,10 @@ function Recommendations() {
             order.
           </span>
         </div>
-        <span className='bg-[var(--primary)] text-[var(--primary-foreground)] text-xs font-bold rounded px-3 py-1 ml-3 shadow'>
+        <button className='bg-[var(--primary)] text-[var(--primary-foreground)] text-xs font-bold rounded px-4 py-2 ml-3 shadow active:scale-95 transition'>
           GET CODE
-        </span>
+        </button>
       </div>
-    </div>
+    </section>
   );
 }

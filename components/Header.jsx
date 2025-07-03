@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { ChevronDown, User, Heart, ShoppingCart } from "lucide-react";
 import { Listbox, Menu as HeadlessMenu, Transition } from "@headlessui/react";
 import { clearUser } from "@/store/authSlice";
-import MobileHeader from "./mobile/MobileHeader";
+import MobileHeader from "./MobileBottomNav";
 import Link from "next/link";
 
 // Philippine locations
