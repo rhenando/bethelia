@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import { Search, Heart, ShoppingCart } from "lucide-react";
-import MobileBottomNav from "@/components/MobileBottomNav";
 
 // Category and recommendation data
 const categories = [
@@ -69,7 +68,6 @@ export default function MobileHomePage() {
         <CategoryScroll />
         <Recommendations />
       </div>
-      <MobileBottomNav />
     </>
   );
 }
