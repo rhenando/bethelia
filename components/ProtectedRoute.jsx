@@ -1,5 +1,4 @@
 "use client";
-
 import { useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -9,12 +8,14 @@ const ProtectedRoute = ({ children }) => {
   const router = useRouter();
 
   useEffect(() => {
-    if (!isLoggedIn) {
-      router.push("/signin"); // redirect to login
+    if (isLoggedIn === false) {
+      router.replace("/signin");
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn, router]);
 
-  if (!isLoggedIn) return null; // or a loader
+  // While checking login, you can show a loader
+  if (isLoggedIn === undefined) return <div>Loading...</div>;
+  if (!isLoggedIn) return null;
 
   return children;
 };

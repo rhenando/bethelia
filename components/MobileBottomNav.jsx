@@ -1,16 +1,22 @@
 "use client";
 import React from "react";
 import { Home, Layers, Users, ShoppingCart, User } from "lucide-react";
-
-const navItems = [
-  { label: "Home", href: "/", icon: Home },
-  { label: "Categories", href: "/categories", icon: Layers },
-  { label: "Suppliers", href: "/suppliers", icon: Users },
-  { label: "Cart", href: "/cart", icon: ShoppingCart, badge: 3 },
-  { label: "Account", href: "/account", icon: User },
-];
+import { useSelector } from "react-redux";
 
 export default function MobileBottomNav() {
+  const user = useSelector((state) => state.auth.user);
+
+  const navItems = [
+    { label: "Home", href: "/", icon: Home },
+    { label: "Categories", href: "/categories", icon: Layers },
+    { label: "Suppliers", href: "/suppliers", icon: Users },
+    { label: "Cart", href: "/cart", icon: ShoppingCart, badge: 3 },
+    // Keep User icon for both cases; only label/href changes
+    user
+      ? { label: "Account", href: "/account", icon: User }
+      : { label: "Login", href: "/login", icon: User },
+  ];
+
   return (
     <nav className='fixed bottom-0 inset-x-0 z-40 bg-white border-t flex justify-between items-center px-2 py-1 shadow md:hidden h-[10vh]'>
       {navItems.map(({ label, href, icon: Icon, badge }) => (

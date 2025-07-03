@@ -162,21 +162,25 @@ export default function AccountPage() {
                 </div>
               )}
             </div>
-            <button className='ml-1 flex items-center gap-1 px-2 py-1 rounded-full border border-gray-200 text-xs font-semibold text-gray-600 hover:bg-gray-50'>
-              <Pencil className='h-4 w-4' />
-            </button>
-          </div>
-          <div className='bg-white rounded-xl mt-3 flex items-center justify-between p-3'>
-            <span className='text-gray-500 font-semibold text-xs'>
-              Welcome to your account!
-            </span>
-            <a
-              href='#'
-              className='flex items-center gap-1 bg-[var(--primary)] text-white font-semibold px-3 py-1 rounded-full text-xs hover:bg-[var(--primary-foreground)] transition'
-            >
-              Subscribe
-              <ChevronRight className='h-4 w-4' />
-            </a>
+            {/* Pencil and Logout Icons */}
+            <div className='flex items-center gap-2 ml-1'>
+              <button
+                className='flex items-center gap-1 px-2 py-1 rounded-full border border-gray-200 text-xs font-semibold text-gray-600 hover:bg-gray-50'
+                aria-label='Edit Profile'
+                type='button'
+              >
+                <Pencil className='h-4 w-4' />
+              </button>
+              <button
+                onClick={handleLogout}
+                className='flex items-center p-2 rounded-full border border-gray-200 text-gray-600 hover:bg-red-50 hover:text-red-600 transition'
+                aria-label='Log out'
+                title='Log out'
+                type='button'
+              >
+                <LogOut className='h-4 w-4' />
+              </button>
+            </div>
           </div>
         </div>
         {/* Quick Actions */}
@@ -213,16 +217,10 @@ export default function AccountPage() {
         </div>
         {/* Spacer for visual separation */}
         <div className='flex-1' />
-        {/* Help Button (right aligned) + Logout */}
+        {/* Help Button (right aligned) */}
         <div className='w-full flex flex-col items-end gap-3 pb-3 pr-4'>
           <AnimatedHelpButton showFull={showFullHelp} />
-          <button
-            onClick={handleLogout}
-            className='w-full bg-red-50 hover:bg-red-100 text-red-600 font-semibold py-3 rounded-xl flex items-center justify-center gap-2 text-base shadow transition'
-          >
-            <LogOut className='h-5 w-5' />
-            Log out
-          </button>
+          {/* Logout button removed from here */}
         </div>
       </div>
     </div>
