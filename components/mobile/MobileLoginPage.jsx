@@ -28,39 +28,41 @@ import {
 export default function MobileLoginPage() {
   const dispatch = useDispatch();
   const router = useRouter();
-  const [countryCode, setCountryCode] = useState("+63");
+  const [countryCode] = useState("+63");
   const [phone, setPhone] = useState("");
   const [stage, setStage] = useState("phone");
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const nationalNumber = phone.replace(/\D/g, "").replace(/^0+/, "");
-  const fullPhoneNumber = `${countryCode}${nationalNumber}`;
-
-  // Setup reCAPTCHA once
+  // Setup classic reCAPTCHA (v2, invisible)
   const setupRecaptcha = () => {
     if (!window.recaptchaVerifier) {
       window.recaptchaVerifier = new RecaptchaVerifier(
-        auth,
         "recaptcha-container",
-        { size: "invisible" }
+        {
+          size: "invisible",
+          callback: () => {
+            // reCAPTCHA solved, allow signInWithPhoneNumber.
+          },
+        },
+        auth
       );
     }
   };
 
-  // After login, redirect by user role
+  const nationalNumber = phone.replace(/\D/g, "").replace(/^0+/, "");
+  const fullPhoneNumber = `${countryCode}${nationalNumber}`;
+
   const redirectByRole = (role) => {
     if (role === "supplier") {
-      router.push("/account"); // <-- to /account, not /supplier-dashboard
+      router.push("/account");
     } else if (role === "buyer") {
-      router.push("/"); // <-- to home, not /buyer-dashboard
+      router.push("/");
     } else {
-      // fallback if role is something else
       router.push("/");
     }
   };
 
-  // Phone OTP
   const handleSendOtp = async () => {
     if (!nationalNumber) {
       toast.error("Please enter your phone number.");
@@ -73,17 +75,24 @@ export default function MobileLoginPage() {
     setLoading(true);
     try {
       setupRecaptcha();
+      const appVerifier = window.recaptchaVerifier;
       const confirmationResult = await signInWithPhoneNumber(
         auth,
         fullPhoneNumber,
-        window.recaptchaVerifier
+        appVerifier
       );
       window.confirmationResult = confirmationResult;
       toast.success(`OTP sent to ${fullPhoneNumber}`);
       setStage("otp");
     } catch (err) {
       console.error(err);
-      toast.error("Failed to send OTP. Please try again.");
+      if (err.code === "auth/too-many-requests") {
+        toast.error("Too many attempts. Please wait before trying again.");
+      } else {
+        toast.error(
+          "Failed to send OTP. Check your phone number and try again."
+        );
+      }
     } finally {
       setLoading(false);
     }
@@ -160,7 +169,6 @@ export default function MobileLoginPage() {
   const handleGoogle = () => socialLogin(new GoogleAuthProvider());
   const handleApple = () => socialLogin(new OAuthProvider("apple.com"));
 
-  // UI
   return (
     <div className='fixed inset-0 bg-gray-50 flex flex-col justify-center items-center md:hidden overflow-hidden z-50'>
       <div className='w-full'>
@@ -253,7 +261,7 @@ export default function MobileLoginPage() {
             </div>
           </>
         )}
-        <div id='recaptcha-container' className='hidden' />
+        <div id='recaptcha-container' />
       </div>
     </div>
   );

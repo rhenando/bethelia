@@ -26,7 +26,7 @@ export default function RootLayout({ children }) {
         <AppProviders>
           <ClientLayout>
             {children}
-            <MobileBottomNav /> {/* <-- Add here, just above Toaster */}
+            <MobileBottomNav />
             <Toaster richColors />
           </ClientLayout>
         </AppProviders>

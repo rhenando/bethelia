@@ -4,7 +4,6 @@ import MobileLoginPage from "@/components/mobile/MobileLoginPage"; // Mobile ver
 export default function LoginScreen() {
   return (
     <>
-      <LoginPage />
       <MobileLoginPage />
     </>
   );
