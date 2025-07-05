@@ -1,6 +1,6 @@
 # Project Structure
 
-bethelia
+betheliaph
 ├── .next
 │   ├── cache
 │   │   ├── swc
@@ -22,39 +22,9 @@ bethelia
 │   │   │   │   ├── 19.pack.gz
 │   │   │   │   ├── 2.pack.gz
 │   │   │   │   ├── 20.pack.gz
-│   │   │   │   ├── 21.pack.gz
-│   │   │   │   ├── 22.pack.gz
-│   │   │   │   ├── 23.pack.gz
-│   │   │   │   ├── 24.pack.gz
-│   │   │   │   ├── 25.pack.gz
-│   │   │   │   ├── 26.pack.gz
-│   │   │   │   ├── 27.pack.gz
-│   │   │   │   ├── 28.pack.gz
-│   │   │   │   ├── 29.pack.gz
 │   │   │   │   ├── 3.pack.gz
-│   │   │   │   ├── 30.pack.gz
-│   │   │   │   ├── 31.pack.gz
-│   │   │   │   ├── 32.pack.gz
-│   │   │   │   ├── 33.pack.gz
-│   │   │   │   ├── 34.pack.gz
-│   │   │   │   ├── 35.pack.gz
-│   │   │   │   ├── 36.pack.gz
-│   │   │   │   ├── 37.pack.gz
-│   │   │   │   ├── 38.pack.gz
-│   │   │   │   ├── 39.pack.gz
 │   │   │   │   ├── 4.pack.gz
-│   │   │   │   ├── 40.pack.gz
-│   │   │   │   ├── 41.pack.gz
-│   │   │   │   ├── 42.pack.gz
-│   │   │   │   ├── 43.pack.gz
-│   │   │   │   ├── 44.pack.gz
-│   │   │   │   ├── 45.pack.gz
-│   │   │   │   ├── 46.pack.gz
-│   │   │   │   ├── 47.pack.gz
-│   │   │   │   ├── 48.pack.gz
-│   │   │   │   ├── 49.pack.gz
 │   │   │   │   ├── 5.pack.gz
-│   │   │   │   ├── 50.pack.gz
 │   │   │   │   ├── 6.pack.gz
 │   │   │   │   ├── 7.pack.gz
 │   │   │   │   ├── 8.pack.gz
@@ -64,7 +34,6 @@ bethelia
 │   │   │   ├── client-development-fallback
 │   │   │   │   ├── 0.pack.gz
 │   │   │   │   ├── 1.pack.gz
-│   │   │   │   ├── index.pack.gz
 │   │   │   │   └── index.pack.gz.old
 │   │   │   └── server-development
 │   │   │       ├── 0.pack.gz
@@ -76,56 +45,11 @@ bethelia
 │   │   │       ├── 14.pack.gz
 │   │   │       ├── 15.pack.gz
 │   │   │       ├── 16.pack.gz
-│   │   │       ├── 17.pack.gz
-│   │   │       ├── 18.pack.gz
-│   │   │       ├── 19.pack.gz
 │   │   │       ├── 2.pack.gz
-│   │   │       ├── 20.pack.gz
-│   │   │       ├── 21.pack.gz
-│   │   │       ├── 22.pack.gz
-│   │   │       ├── 23.pack.gz
-│   │   │       ├── 24.pack.gz
-│   │   │       ├── 25.pack.gz
-│   │   │       ├── 26.pack.gz
-│   │   │       ├── 27.pack.gz
-│   │   │       ├── 28.pack.gz
-│   │   │       ├── 29.pack.gz
 │   │   │       ├── 3.pack.gz
-│   │   │       ├── 30.pack.gz
-│   │   │       ├── 31.pack.gz
-│   │   │       ├── 32.pack.gz
-│   │   │       ├── 33.pack.gz
-│   │   │       ├── 34.pack.gz
-│   │   │       ├── 35.pack.gz
-│   │   │       ├── 36.pack.gz
-│   │   │       ├── 37.pack.gz
-│   │   │       ├── 38.pack.gz
-│   │   │       ├── 39.pack.gz
 │   │   │       ├── 4.pack.gz
-│   │   │       ├── 40.pack.gz
-│   │   │       ├── 41.pack.gz
-│   │   │       ├── 42.pack.gz
-│   │   │       ├── 43.pack.gz
-│   │   │       ├── 44.pack.gz
-│   │   │       ├── 45.pack.gz
-│   │   │       ├── 46.pack.gz
-│   │   │       ├── 47.pack.gz
-│   │   │       ├── 48.pack.gz
-│   │   │       ├── 49.pack.gz
 │   │   │       ├── 5.pack.gz
-│   │   │       ├── 50.pack.gz
-│   │   │       ├── 51.pack.gz
-│   │   │       ├── 52.pack.gz
-│   │   │       ├── 53.pack.gz
-│   │   │       ├── 54.pack.gz
-│   │   │       ├── 55.pack.gz
-│   │   │       ├── 56.pack.gz
-│   │   │       ├── 57.pack.gz
-│   │   │       ├── 58.pack.gz
-│   │   │       ├── 59.pack.gz
 │   │   │       ├── 6.pack.gz
-│   │   │       ├── 60.pack.gz
-│   │   │       ├── 61.pack.gz
 │   │   │       ├── 7.pack.gz
 │   │   │       ├── 8.pack.gz
 │   │   │       ├── 9.pack.gz
@@ -134,20 +58,24 @@ bethelia
 │   │   └── .rscinfo
 │   ├── server
 │   │   ├── app
-│   │   │   ├── page_client-reference-manifest.js
-│   │   │   └── page.js
+│   │   │   ├── _not-found
+│   │   │   │   └── page_client-reference-manifest.js
+│   │   │   └── supplier
+│   │   │       └── products
+│   │   │           └── add
+│   │   │               ├── page_client-reference-manifest.js
+│   │   │               └── page.js
 │   │   ├── vendor-chunks
 │   │   │   ├── @firebase.js
-│   │   │   ├── @floating-ui.js
 │   │   │   ├── @grpc.js
-│   │   │   ├── @headlessui.js
 │   │   │   ├── @protobufjs.js
 │   │   │   ├── @radix-ui.js
-│   │   │   ├── @react-aria.js
-│   │   │   ├── @react-stately.js
 │   │   │   ├── @reduxjs.js
 │   │   │   ├── @swc.js
+│   │   │   ├── attr-accept.js
+│   │   │   ├── class-variance-authority.js
 │   │   │   ├── clsx.js
+│   │   │   ├── file-selector.js
 │   │   │   ├── firebase.js
 │   │   │   ├── idb.js
 │   │   │   ├── immer.js
@@ -155,14 +83,17 @@ bethelia
 │   │   │   ├── long.js
 │   │   │   ├── lucide-react.js
 │   │   │   ├── next.js
+│   │   │   ├── object-assign.js
+│   │   │   ├── prop-types.js
 │   │   │   ├── protobufjs.js
+│   │   │   ├── react-dropzone.js
+│   │   │   ├── react-is.js
 │   │   │   ├── react-redux.js
 │   │   │   ├── redux-persist.js
 │   │   │   ├── redux-thunk.js
 │   │   │   ├── redux.js
 │   │   │   ├── reselect.js
 │   │   │   ├── sonner.js
-│   │   │   ├── tabbable.js
 │   │   │   ├── tailwind-merge.js
 │   │   │   ├── tslib.js
 │   │   │   └── use-sync-external-store.js
@@ -180,12 +111,38 @@ bethelia
 │   ├── static
 │   │   ├── chunks
 │   │   │   ├── app
-│   │   │   │   ├── layout.js
-│   │   │   │   └── page.js
+│   │   │   │   ├── _not-found
+│   │   │   │   │   └── page.js
+│   │   │   │   ├── supplier
+│   │   │   │   │   ├── products
+│   │   │   │   │   │   └── add
+│   │   │   │   │   │       └── page.js
+│   │   │   │   │   └── layout.js
+│   │   │   │   └── layout.js
+│   │   │   ├── fallback
+│   │   │   │   ├── pages
+│   │   │   │   │   ├── _app.js
+│   │   │   │   │   └── _error.js
+│   │   │   │   ├── _app-pages-browser_node_modules_next_dist_client_dev_noop-turbopack-hmr_js.js
+│   │   │   │   ├── _pages-dir-browser_node_modules_next_dist_pages__app_js.js
+│   │   │   │   ├── _pages-dir-browser_node_modules_next_dist_pages__error_js.js
+│   │   │   │   ├── amp.js
+│   │   │   │   ├── main-app.js
+│   │   │   │   ├── main.js
+│   │   │   │   ├── react-refresh.js
+│   │   │   │   └── webpack.js
+│   │   │   ├── pages
+│   │   │   │   ├── _app.js
+│   │   │   │   └── _error.js
 │   │   │   ├── _app-pages-browser_node_modules_next_dist_client_dev_noop-turbopack-hmr_js.js
+│   │   │   ├── _error.js
+│   │   │   ├── _pages-dir-browser_node_modules_next_dist_pages__app_js.js
+│   │   │   ├── _pages-dir-browser_node_modules_next_dist_pages__error_js.js
 │   │   │   ├── app-pages-internals.js
 │   │   │   ├── main-app.js
+│   │   │   ├── main.js
 │   │   │   ├── polyfills.js
+│   │   │   ├── react-refresh.js
 │   │   │   └── webpack.js
 │   │   ├── css
 │   │   │   └── app
@@ -201,64 +158,59 @@ bethelia
 │   │   │   ├── 9610d9e46709d722-s.woff2
 │   │   │   └── ba015fad6dcf6784-s.woff2
 │   │   └── webpack
-│   │       └── 633457081244afec._.hot-update.json
+│   │       ├── app
+│   │       │   ├── layout.05669c634f912beb.hot-update.js
+│   │       │   ├── layout.56e938588af7cac9.hot-update.js
+│   │       │   ├── layout.a91f7f157efbbe55.hot-update.js
+│   │       │   ├── layout.d8d6793e720c20ce.hot-update.js
+│   │       │   └── layout.ee477357471d6548.hot-update.js
+│   │       ├── 009771e77c83aeea.webpack.hot-update.json
+│   │       ├── 05669c634f912beb.webpack.hot-update.json
+│   │       ├── 56e938588af7cac9.webpack.hot-update.json
+│   │       ├── 633457081244afec._.hot-update.json
+│   │       ├── a91f7f157efbbe55.webpack.hot-update.json
+│   │       ├── d8d6793e720c20ce.webpack.hot-update.json
+│   │       ├── ee477357471d6548.webpack.hot-update.json
+│   │       ├── webpack.009771e77c83aeea.hot-update.js
+│   │       ├── webpack.05669c634f912beb.hot-update.js
+│   │       ├── webpack.56e938588af7cac9.hot-update.js
+│   │       ├── webpack.a91f7f157efbbe55.hot-update.js
+│   │       ├── webpack.d8d6793e720c20ce.hot-update.js
+│   │       └── webpack.ee477357471d6548.hot-update.js
 │   ├── types
 │   │   ├── app
-│   │   │   ├── layout.ts
-│   │   │   └── page.ts
+│   │   │   ├── supplier
+│   │   │   │   ├── products
+│   │   │   │   │   └── add
+│   │   │   │   │       └── page.ts
+│   │   │   │   └── layout.ts
+│   │   │   └── layout.ts
 │   │   ├── cache-life.d.ts
 │   │   └── package.json
 │   ├── app-build-manifest.json
 │   ├── build-manifest.json
+│   ├── fallback-build-manifest.json
 │   ├── package.json
 │   ├── react-loadable-manifest.json
 │   └── trace
 ├── app
 │   ├── account
 │   │   └── page.jsx
-│   ├── login
-│   │   └── page.jsx
-│   ├── products
-│   │   ├── add
-│   │   │   └── page.jsx
-│   │   └── page.jsx
-│   ├── signup
-│   │   └── page.jsx
 │   ├── supplier
-│   │   └── welcome
-│   │       └── page.jsx
-│   ├── supplier-dashboard
 │   │   ├── products
-│   │   │   ├── new
+│   │   │   ├── add
 │   │   │   │   └── page.jsx
-│   │   │   └── page.jsx
-│   │   ├── profile
 │   │   │   └── page.jsx
 │   │   ├── layout.jsx
 │   │   └── page.jsx
-│   ├── supplier-registration
-│   │   └── page.jsx
-│   ├── AppProviders.jsx
 │   ├── favicon.ico
 │   ├── globals.css
 │   ├── layout.js
-│   ├── page copy.js
-│   └── page.js
+│   ├── page.js
+│   └── Providers.jsx
 ├── components
-│   ├── homepage
-│   │   ├── BusinessInsights.jsx
-│   │   ├── CategoriesCarousel.jsx
-│   │   ├── FeaturedProducts.jsx
-│   │   ├── HeroSlider.jsx
-│   │   ├── TradeServices.jsx
-│   │   └── VerifiedSuppliers.jsx
-│   ├── mobile
-│   │   ├── MobileHeader.jsx
-│   │   ├── MobileLoginPage.jsx
-│   │   ├── MobileSignupPage.jsx
-│   │   ├── ProductQuickAction.jsx
-│   │   └── QuickActionCard.jsx
-│   ├── supplier-dashboard
+│   ├── supplier
+│   │   └── SupplierDocuments.jsx
 │   ├── ui
 │   │   ├── accordion.jsx
 │   │   ├── alert-dialog.jsx
@@ -306,33 +258,21 @@ bethelia
 │   │   ├── toggle-group.jsx
 │   │   ├── toggle.jsx
 │   │   └── tooltip.jsx
-│   ├── ClientLayout.jsx
-│   ├── Footer.jsx
-│   ├── Header.jsx
-│   ├── LayoutWrapper.jsx
-│   ├── LoginPage.jsx
-│   ├── ProtectedRoute.jsx
-│   ├── SearchBar.jsx
-│   ├── SignUpDialog.jsx
-│   ├── SignupPage.jsx
-│   └── TiptapEditor.jsx
+│   └── NavbarMobile.jsx
 ├── hooks
-│   ├── use-mobile.js
-│   └── useBadgeSync.js
+│   └── use-mobile.js
 ├── lib
 │   ├── firebase.js
-│   ├── headerIconsConfig.js
 │   └── utils.js
 ├── public
 │   ├── file.svg
 │   ├── globe.svg
 │   ├── next.svg
+│   ├── no-image.jpg
 │   ├── vercel.svg
 │   └── window.svg
 ├── store
 │   ├── authSlice.js
-│   ├── badgeSlice.js
-│   ├── searchSlice.js
 │   └── store.js
 ├── .gitignore
 ├── components.json
