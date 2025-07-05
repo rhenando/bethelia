@@ -57,7 +57,7 @@ export default function SupplierLayout({ children }) {
   return (
     <div className='max-w-md mx-auto min-h-screen bg-white rounded-2xl shadow-md'>
       {/* Top Banner */}
-      <div className='w-full bg-[var(--primary)] text-white text-center font-extrabold tracking-wide py-3 text-xl shadow mb-2 rounded-t-2xl'>
+      <div className='w-full bg-[var(--primary)] text-white text-center font-extrabold tracking-wide py-3 text-xl shadow mb-2'>
         Bethelia Business Partner Account
       </div>
       {/* Header */}
