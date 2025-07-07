@@ -26,9 +26,6 @@ export default function SupplierDashboardPage() {
           </div>
         </div>
       </div>
-      <div className='text-sm text-gray-500'>
-        Welcome back, Maria Reyes! Here is a quick overview of your business.
-      </div>
     </div>
   );
 }

@@ -103,10 +103,6 @@ export default function BuyerLayout({ children }) {
 
   return (
     <div className='max-w-md mx-auto min-h-screen bg-white rounded-2xl shadow-md'>
-      {/* Top Banner */}
-      <div className='w-full bg-[var(--primary)] text-white text-center font-extrabold tracking-wide py-3 text-xl shadow mb-2'>
-        Bethelia Buyer Account
-      </div>
       {/* Header */}
       <div className='px-4 py-5 border-b border-gray-200 flex items-center justify-between'>
         <div className='flex items-center gap-3'>

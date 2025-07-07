@@ -1,7 +1,41 @@
 "use client";
+import React from "react";
 import { Heart, ShoppingCart, Search } from "lucide-react";
+import { useKeenSlider } from "keen-slider/react";
+import "keen-slider/keen-slider.min.css";
 
-// Category icons (replace with SVG or icon library if you want)
+// --- Promo banners for the carousel ---
+const promoBanners = [
+  {
+    title: "End of season sale",
+    subtitle: "20% discount on all products",
+    button: "Shop Now",
+    image:
+      "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=140&q=80",
+    bg: "bg-blue-100",
+    color: "text-blue-700",
+  },
+  {
+    title: "Back to School",
+    subtitle: "Save 30% on backpacks",
+    button: "Browse Bags",
+    image:
+      "https://images.unsplash.com/photo-1465101162946-4377e57745c3?auto=format&fit=crop&w=140&q=80",
+    bg: "bg-pink-100",
+    color: "text-pink-700",
+  },
+  {
+    title: "Summer Essentials",
+    subtitle: "Up to 25% off sunglasses",
+    button: "Shop Shades",
+    image:
+      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=140&q=80",
+    bg: "bg-yellow-100",
+    color: "text-yellow-700",
+  },
+];
+
+// --- Categories ---
 const categories = [
   {
     name: "Shoes",
@@ -25,6 +59,7 @@ const categories = [
   },
 ];
 
+// --- Offers ---
 const offers = [
   { label: "15% off" },
   { label: "15% off" },
@@ -33,6 +68,7 @@ const offers = [
   { label: "20% off" },
 ];
 
+// --- Products ---
 const products = [
   {
     id: "1",
@@ -63,6 +99,106 @@ const products = [
       "https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b?auto=format&fit=crop&w=400&q=80",
   },
 ];
+
+// --- PromoBannerCarousel with Keen Slider Parallax & Slide Bar ---
+function PromoBannerCarousel({ banners }) {
+  const timer = React.useRef();
+  const [pause, setPause] = React.useState(false);
+  const [currentSlide, setCurrentSlide] = React.useState(0);
+  const imageRefs = React.useRef([]);
+  const [sliderRef, instanceRef] = useKeenSlider({
+    loop: true,
+    drag: true,
+    slides: { perView: 1 },
+    animation: {
+      duration: 1200, // 1.2s for slomo
+      easing: (t) => t,
+    },
+    detailsChanged(s) {
+      s.slides.forEach((slide, idx) => {
+        const img = imageRefs.current[idx];
+        if (img) {
+          const translate = 40 * slide.progress;
+          img.style.transform = `translateX(${translate}px) scale(1.08)`;
+        }
+      });
+      setCurrentSlide(s.track.details.rel);
+    },
+    created: (slider) => {
+      autoplay(slider);
+      slider.container.addEventListener("mouseover", () => setPause(true));
+      slider.container.addEventListener("mouseout", () => setPause(false));
+    },
+    dragStarted: () => setPause(true),
+    dragEnded: () => setPause(false),
+    updated: (slider) => autoplay(slider),
+    animationEnded: (slider) => autoplay(slider),
+  });
+
+  function autoplay(slider) {
+    clearTimeout(timer.current);
+    if (pause) return;
+    timer.current = setTimeout(() => {
+      if (slider) slider.next();
+    }, 3000);
+  }
+
+  React.useEffect(() => {
+    return () => clearTimeout(timer.current);
+  }, []);
+
+  React.useEffect(() => {
+    if (instanceRef.current) {
+      autoplay(instanceRef.current);
+    }
+  }, [pause, instanceRef]);
+
+  imageRefs.current = [];
+
+  return (
+    <div className='mx-4 mt-3 mb-0 rounded-xl overflow-hidden'>
+      <div ref={sliderRef} className='keen-slider rounded-xl'>
+        {banners.map((banner, idx) => (
+          <div className='keen-slider__slide flex min-w-full' key={idx}>
+            <div
+              className={`flex items-center p-4 w-full relative rounded-xl ${banner.bg}`}
+            >
+              <div className='flex-1'>
+                <div className={`text-sm font-medium mb-1 ${banner.color}`}>
+                  {banner.title}
+                </div>
+                <div className={`text-2xl font-bold mb-1 ${banner.color}`}>
+                  {banner.subtitle}
+                </div>
+                <button className='mt-2 px-5 py-2 bg-black text-white rounded-full font-semibold shadow hover:bg-opacity-90 transition'>
+                  {banner.button}
+                </button>
+              </div>
+              <img
+                ref={(el) => (imageRefs.current[idx] = el)}
+                src={banner.image}
+                alt='model'
+                className='h-28 w-20 object-cover rounded-xl ml-2 transition-transform duration-500 will-change-transform'
+                style={{ transform: "scale(1.08)" }}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+      {/* Slide Indicator Bar */}
+      <div className='w-full flex justify-center py-2 gap-2'>
+        {banners.map((_, idx) => (
+          <div
+            key={idx}
+            className={`h-1 w-28 rounded transition-all duration-300
+              ${currentSlide === idx ? "bg-blue-400" : "bg-blue-100"}
+            `}
+          ></div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function HomePage() {
   // Demo counts
@@ -110,29 +246,31 @@ export default function HomePage() {
           </button>
         </div>
       </header>
-      {/* Promo Banner */}
-      <div className='mx-4 mt-3 mb-3 rounded-xl overflow-hidden bg-blue-100 flex items-center p-4 relative'>
-        <div className='flex-1'>
-          <div className='text-sm text-blue-900 font-medium mb-1'>
-            End of season sale
+
+      {/* Promo Banner Carousel */}
+      <PromoBannerCarousel banners={promoBanners} />
+
+      {/* Sell With Us Banner */}
+      <div className='mx-4 my-4 rounded-xl bg-gradient-to-r from-blue-600 to-blue-400 text-white p-5 flex items-center shadow'>
+        <div className='flex-1 flex flex-col'>
+          <div>
+            <div className='text-lg font-bold mb-1'>
+              Have something to sell?
+            </div>
+            <div className='mb-2 text-sm'>
+              Open your shop on Bethelia and reach thousands of customers across
+              the country!
+            </div>
           </div>
-          <div className='text-2xl font-bold text-blue-700 mb-1'>
-            20% discount on all products
-          </div>
-          <button className='mt-2 px-5 py-2 bg-blue-600 text-white rounded-full font-semibold shadow hover:bg-blue-700 transition'>
-            Shop Now
-          </button>
+          <a
+            href='/supplier-login'
+            className='inline-block bg-white text-blue-700 px-4 py-2 rounded-full font-semibold shadow hover:bg-blue-50 transition mt-2 self-end'
+          >
+            Start Selling
+          </a>
         </div>
-        <img
-          src='https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=140&q=80'
-          alt='model'
-          className='h-28 w-20 object-cover rounded-xl ml-2'
-        />
       </div>
-      {/* Tabs / Section Indicator */}
-      <div className='w-full flex justify-center py-2'>
-        <div className='h-1 w-24 rounded bg-blue-400'></div>
-      </div>
+
       {/* Categories */}
       <h2 className='font-semibold text-base px-4 mt-2 mb-1'>Categories</h2>
       <div className='flex overflow-x-auto gap-4 px-4 pb-2'>
@@ -154,6 +292,7 @@ export default function HomePage() {
           </div>
         ))}
       </div>
+
       {/* Brand Offers */}
       <h2 className='font-semibold text-base px-4 mt-4 mb-1'>Brand Offers</h2>
       <div className='flex overflow-x-auto gap-3 px-4 pb-2'>
@@ -166,6 +305,7 @@ export default function HomePage() {
           </div>
         ))}
       </div>
+
       {/* New Arrivals */}
       <div className='flex items-center justify-between px-4 mt-4'>
         <h2 className='font-semibold text-base'>New Arrivals</h2>

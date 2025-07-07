@@ -61,7 +61,7 @@ export default function NavbarMobile() {
             className='w-full py-2 px-4 rounded bg-[var(--primary)] text-white font-semibold'
             onClick={() => {
               onClose();
-              router.push("/supplier-login");
+              router.push("/buyer-login");
             }}
           >
             Log In

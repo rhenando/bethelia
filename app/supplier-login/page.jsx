@@ -50,10 +50,13 @@ export default function SupplierLogin() {
     }
   };
 
-  // Google sign-in handler
+  // Google sign-in handler with force account selection
   const handleGoogleSignIn = async () => {
     try {
       const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({
+        prompt: "select_account", // Always show Google account picker
+      });
       const result = await signInWithPopup(auth, provider);
       const firebaseUser = result.user;
 
