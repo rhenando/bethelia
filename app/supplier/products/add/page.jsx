@@ -13,6 +13,14 @@ import { useDropzone } from "react-dropzone";
 import { ArrowLeft } from "lucide-react";
 import clsx from "clsx";
 
+// Helper to make file names safe for Firebase Storage
+const safeFileName = (name) =>
+  name
+    .toLowerCase()
+    .replace(/[^a-z0-9.]/gi, "_") // allow only a-z, 0-9, dot (for extension)
+    .replace(/_+/g, "_")
+    .replace(/^_+|_+$/g, "");
+
 export default function AddProduct({ onBack }) {
   const router = useRouter();
   const authUser = useSelector((state) => state.auth.user);
@@ -145,9 +153,9 @@ export default function AddProduct({ onBack }) {
       const mainImageUrls = [];
       for (let i = 0; i < mainImages.length; ++i) {
         const file = mainImages[i];
-        const refPath = `products/${authUser.uid}/main_${Date.now()}_${i}_${
-          file.name
-        }`;
+        const refPath = `products/${
+          authUser.uid
+        }/main_${Date.now()}_${i}_${safeFileName(file.name)}`;
         const storageRef = ref(storage, refPath);
         const snap = await uploadBytesResumable(storageRef, file);
         const url = await getDownloadURL(snap.ref);
@@ -161,7 +169,7 @@ export default function AddProduct({ onBack }) {
           if (variant.image) {
             const refPath = `products/${
               authUser.uid
-            }/variant_${Date.now()}_${idx}_${variant.image.name}`;
+            }/variant_${Date.now()}_${idx}_${safeFileName(variant.image.name)}`;
             const storageRef = ref(storage, refPath);
             const snap = await uploadBytesResumable(storageRef, variant.image);
             imageUrl = await getDownloadURL(snap.ref);

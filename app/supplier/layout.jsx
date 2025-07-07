@@ -10,14 +10,13 @@ import {
   Mail,
 } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "@/store/authSlice"; // update if you use different logout
 
-const supplier = {
-  company: "Bethelia Trading PH",
-  email: "supplier@betheliaph.com",
-  logo: "https://ui-avatars.com/api/?name=Bethelia&background=2563eb&color=fff",
-  rep: "Maria Reyes",
-};
-
+// Nav tabs (keep as static array unless you want them role-based)
 const tabs = [
   {
     label: "Dashboard",
@@ -53,6 +52,57 @@ const tabs = [
 
 export default function SupplierLayout({ children }) {
   const pathname = usePathname();
+  const dispatch = useDispatch();
+  const authUser = useSelector((state) => state.auth.user);
+
+  // This assumes your redux auth state holds the user's uid
+  const uid = authUser?.uid;
+
+  const [supplier, setSupplier] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!uid) {
+      setLoading(false);
+      return;
+    }
+    const fetchSupplier = async () => {
+      try {
+        const docRef = doc(db, "users", uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setSupplier(docSnap.data());
+        } else {
+          setSupplier(null);
+        }
+      } catch (err) {
+        setSupplier(null);
+      }
+      setLoading(false);
+    };
+    fetchSupplier();
+  }, [uid]);
+
+  const handleLogout = () => {
+    dispatch(logout());
+    // You can redirect to login or homepage here if needed
+  };
+
+  if (loading) {
+    return (
+      <div className='flex justify-center items-center min-h-screen text-gray-400'>
+        Loading...
+      </div>
+    );
+  }
+
+  if (!supplier) {
+    return (
+      <div className='flex justify-center items-center min-h-screen text-gray-400'>
+        Supplier info not found.
+      </div>
+    );
+  }
 
   return (
     <div className='max-w-md mx-auto min-h-screen bg-white rounded-2xl shadow-md'>
@@ -64,17 +114,32 @@ export default function SupplierLayout({ children }) {
       <div className='px-4 py-5 border-b border-gray-200 flex items-center justify-between'>
         <div className='flex items-center gap-3'>
           <img
-            src={supplier.logo}
-            alt={supplier.company}
+            src={
+              supplier.logo ||
+              `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                supplier.displayName || "Supplier"
+              )}&background=2563eb&color=fff`
+            }
+            alt={supplier.displayName || "Supplier"}
             className='w-14 h-14 rounded-full border shadow'
           />
           <div>
-            <div className='font-bold text-lg'>{supplier.company}</div>
-            <div className='text-xs text-gray-500'>{supplier.email}</div>
-            <div className='text-xs text-gray-400'>Rep: {supplier.rep}</div>
+            <div className='font-bold text-lg'>
+              {supplier.displayName || "Unknown Company"}
+            </div>
+            <div className='text-xs text-gray-500'>
+              {supplier.email || "No email"}
+            </div>
+            <div className='text-xs text-gray-400'>
+              Role: {supplier.role || "N/A"}
+            </div>
+            {/* You can display phone, createdAt, or other fields as needed */}
           </div>
         </div>
-        <button className='text-[var(--primary)] hover:underline flex items-center gap-1'>
+        <button
+          className='text-[var(--primary)] hover:underline flex items-center gap-1'
+          onClick={handleLogout}
+        >
           <LogOut className='w-5 h-5' />
           Logout
         </button>

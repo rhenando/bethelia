@@ -1,8 +1,8 @@
-// components/supplier/SupplierProducts.jsx
 "use client";
 import React from "react";
 import { useRouter } from "next/navigation";
 import { Edit2, Trash2, Package, CheckCircle, XCircle } from "lucide-react";
+import { toast } from "sonner"; // For toasts!
 
 function formatPrice(amount) {
   return (
@@ -10,13 +10,16 @@ function formatPrice(amount) {
   );
 }
 
-function SupplierProducts({
-  products = [],
-
-  onEditProduct,
-  onDeleteProduct,
-}) {
+function SupplierProducts({ products = [], onEditProduct, onDeleteProduct }) {
   const router = useRouter();
+
+  const handleDelete = (prod) => {
+    if (window.confirm("Delete this product?")) {
+      onDeleteProduct?.(prod);
+      toast.success(`${prod.name} deleted!`);
+    }
+  };
+
   return (
     <div>
       <h2 className='font-bold text-lg mb-2 flex items-center gap-2'>
@@ -102,10 +105,7 @@ function SupplierProducts({
                     <button
                       className='p-1 text-red-600 hover:bg-red-50 rounded'
                       title='Delete'
-                      onClick={() =>
-                        window.confirm("Delete this product?") &&
-                        onDeleteProduct?.(prod)
-                      }
+                      onClick={() => handleDelete(prod)}
                     >
                       <Trash2 className='w-4 h-4' />
                     </button>

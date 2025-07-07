@@ -1,7 +1,7 @@
-// app/layout.jsx
 import { Geist, Geist_Mono } from "next/font/google";
 import NavbarMobile from "@/components/NavbarMobile";
 import Providers from "@/app/Providers";
+import { Toaster } from "sonner"; // <-- Add this line
 import "./globals.css";
 
 const geistSans = Geist({
@@ -29,6 +29,8 @@ export default function RootLayout({ children }) {
           <div className='w-full max-w-[430px] min-h-screen bg-white flex flex-col shadow-xl'>
             {/* Wrap your app with Providers */}
             <Providers>
+              <Toaster position='top-center' richColors />{" "}
+              {/* Mount Toaster here! */}
               <main className='flex-1 pb-16'>{children}</main>
               <NavbarMobile />
             </Providers>
