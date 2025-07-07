@@ -16,16 +16,10 @@ export default function Login() {
   const user = useSelector((state) => state.auth.user);
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
-  // Redirect if already logged in
+  // Redirect to /buyer if already logged in
   useEffect(() => {
     if (isLoggedIn && user) {
-      if (user.role === "supplier") {
-        router.replace("/supplier");
-      } else if (user.role === "buyer") {
-        router.replace("/buyer");
-      } else {
-        router.replace("/signup");
-      }
+      router.replace("/buyer");
     }
   }, [isLoggedIn, user, router]);
 
@@ -68,14 +62,8 @@ export default function Login() {
       // Store in Redux using setUser
       dispatch(setUser(userData));
 
-      // Redirect based on role
-      if (userData.role === "supplier") {
-        router.replace("/supplier");
-      } else if (userData.role === "buyer") {
-        router.replace("/buyer");
-      } else {
-        router.replace("/signup");
-      }
+      // Always redirect to /buyer
+      router.replace("/buyer");
     } catch (error) {
       alert(error.message);
     }

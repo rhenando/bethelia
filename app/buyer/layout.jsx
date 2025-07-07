@@ -12,55 +12,45 @@ import {
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { doc, getDoc } from "firebase/firestore";
-import { db, auth } from "@/lib/firebase"; // Make sure auth is exported from your firebase config!
+import { db, auth } from "@/lib/firebase"; // Ensure these are exported!
 import { signOut } from "firebase/auth";
 import { useSelector, useDispatch } from "react-redux";
-import { clearUser } from "@/store/authSlice"; // <-- Correct action
+import { clearUser } from "@/store/authSlice";
 
-// Nav tabs (keep as static array unless you want them role-based)
+// --- Buyer Tabs ---
 const tabs = [
   {
     label: "Dashboard",
-    href: "/supplier",
+    href: "/buyer",
     icon: <BarChart2 className='w-5 h-5' />,
   },
   {
-    label: "Documents",
-    href: "/supplier/documents",
-    icon: <FileText className='w-5 h-5' />,
-  },
-  {
-    label: "Products",
-    href: "/supplier/products",
-    icon: <Package className='w-5 h-5' />,
-  },
-  {
-    label: "Orders",
-    href: "/supplier/orders",
+    label: "My Orders",
+    href: "/buyer/orders",
     icon: <ShoppingBag className='w-5 h-5' />,
   },
+
   {
-    label: "Team",
-    href: "/supplier/team",
-    icon: <Users className='w-5 h-5' />,
+    label: "Saved Products",
+    href: "/buyer/saved-products",
+    icon: <Package className='w-5 h-5' />,
   },
+
   {
     label: "Support",
-    href: "/supplier/support",
+    href: "/buyer/support",
     icon: <Mail className='w-5 h-5' />,
   },
 ];
 
-export default function SupplierLayout({ children }) {
+export default function BuyerLayout({ children }) {
   const pathname = usePathname();
   const router = useRouter();
   const dispatch = useDispatch();
   const authUser = useSelector((state) => state.auth.user);
 
-  // This assumes your redux auth state holds the user's uid
   const uid = authUser?.uid;
-
-  const [supplier, setSupplier] = useState(null);
+  const [buyer, setBuyer] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -68,21 +58,21 @@ export default function SupplierLayout({ children }) {
       setLoading(false);
       return;
     }
-    const fetchSupplier = async () => {
+    const fetchBuyer = async () => {
       try {
         const docRef = doc(db, "users", uid);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-          setSupplier(docSnap.data());
+          setBuyer(docSnap.data());
         } else {
-          setSupplier(null);
+          setBuyer(null);
         }
       } catch (err) {
-        setSupplier(null);
+        setBuyer(null);
       }
       setLoading(false);
     };
-    fetchSupplier();
+    fetchBuyer();
   }, [uid]);
 
   const handleLogout = async () => {
@@ -103,10 +93,10 @@ export default function SupplierLayout({ children }) {
     );
   }
 
-  if (!supplier) {
+  if (!buyer) {
     return (
       <div className='flex justify-center items-center min-h-screen text-gray-400'>
-        Supplier info not found.
+        Buyer info not found.
       </div>
     );
   }
@@ -115,32 +105,32 @@ export default function SupplierLayout({ children }) {
     <div className='max-w-md mx-auto min-h-screen bg-white rounded-2xl shadow-md'>
       {/* Top Banner */}
       <div className='w-full bg-[var(--primary)] text-white text-center font-extrabold tracking-wide py-3 text-xl shadow mb-2'>
-        Bethelia Business Partner Account
+        Bethelia Buyer Account
       </div>
       {/* Header */}
       <div className='px-4 py-5 border-b border-gray-200 flex items-center justify-between'>
         <div className='flex items-center gap-3'>
           <img
             src={
-              supplier.logo ||
+              buyer.logo ||
               `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                supplier.displayName || "Supplier"
+                buyer.displayName || "Buyer"
               )}&background=2563eb&color=fff`
             }
-            alt={supplier.displayName || "Supplier"}
+            alt={buyer.displayName || "Buyer"}
             className='w-14 h-14 rounded-full border shadow'
           />
           <div>
             <div className='font-bold text-lg'>
-              {supplier.displayName || "Unknown Company"}
+              {buyer.displayName || "Unknown Buyer"}
             </div>
             <div className='text-xs text-gray-500'>
-              {supplier.email || "No email"}
+              {buyer.email || "No email"}
             </div>
             <div className='text-xs text-gray-400'>
-              Role: {supplier.role || "N/A"}
+              Role: {buyer.role || "N/A"}
             </div>
-            {/* You can display phone, createdAt, or other fields as needed */}
+            {/* More fields if needed */}
           </div>
         </div>
         <button
