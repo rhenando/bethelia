@@ -21,37 +21,37 @@ import { clearUser } from "@/store/authSlice"; // <-- Correct action
 const tabs = [
   {
     label: "Dashboard",
-    href: "/supplier",
+    href: "/seller",
     icon: <BarChart2 className='w-5 h-5' />,
   },
   {
     label: "Documents",
-    href: "/supplier/documents",
+    href: "/seller/documents",
     icon: <FileText className='w-5 h-5' />,
   },
   {
     label: "Products",
-    href: "/supplier/products",
+    href: "/seller/products",
     icon: <Package className='w-5 h-5' />,
   },
   {
     label: "Orders",
-    href: "/supplier/orders",
+    href: "/seller/orders",
     icon: <ShoppingBag className='w-5 h-5' />,
   },
   {
     label: "Team",
-    href: "/supplier/team",
+    href: "/seller/team",
     icon: <Users className='w-5 h-5' />,
   },
   {
     label: "Support",
-    href: "/supplier/support",
+    href: "/seller/support",
     icon: <Mail className='w-5 h-5' />,
   },
 ];
 
-export default function SupplierLayout({ children }) {
+export default function sellerLayout({ children }) {
   const pathname = usePathname();
   const router = useRouter();
   const dispatch = useDispatch();
@@ -60,7 +60,7 @@ export default function SupplierLayout({ children }) {
   // This assumes your redux auth state holds the user's uid
   const uid = authUser?.uid;
 
-  const [supplier, setSupplier] = useState(null);
+  const [seller, setseller] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -68,28 +68,28 @@ export default function SupplierLayout({ children }) {
       setLoading(false);
       return;
     }
-    const fetchSupplier = async () => {
+    const fetchseller = async () => {
       try {
         const docRef = doc(db, "users", uid);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-          setSupplier(docSnap.data());
+          setseller(docSnap.data());
         } else {
-          setSupplier(null);
+          setseller(null);
         }
       } catch (err) {
-        setSupplier(null);
+        setseller(null);
       }
       setLoading(false);
     };
-    fetchSupplier();
+    fetchseller();
   }, [uid]);
 
   const handleLogout = async () => {
     try {
       await signOut(auth); // Firebase logout
       dispatch(clearUser()); // Redux: clear user state
-      router.replace("/supplier-login"); // Redirect to login page
+      router.replace("/seller-login"); // Redirect to login page
     } catch (error) {
       alert("Logout failed: " + error.message);
     }
@@ -103,10 +103,10 @@ export default function SupplierLayout({ children }) {
     );
   }
 
-  if (!supplier) {
+  if (!seller) {
     return (
       <div className='flex justify-center items-center min-h-screen text-gray-400'>
-        Supplier info not found.
+        seller info not found.
       </div>
     );
   }
@@ -122,23 +122,23 @@ export default function SupplierLayout({ children }) {
         <div className='flex items-center gap-3'>
           <img
             src={
-              supplier.logo ||
+              seller.logo ||
               `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                supplier.displayName || "Supplier"
+                seller.displayName || "seller"
               )}&background=2563eb&color=fff`
             }
-            alt={supplier.displayName || "Supplier"}
+            alt={seller.displayName || "seller"}
             className='w-14 h-14 rounded-full border shadow'
           />
           <div>
             <div className='font-bold text-lg'>
-              {supplier.displayName || "Unknown Company"}
+              {seller.displayName || "Unknown Company"}
             </div>
             <div className='text-xs text-gray-500'>
-              {supplier.email || "No email"}
+              {seller.email || "No email"}
             </div>
             <div className='text-xs text-gray-400'>
-              Role: {supplier.role || "N/A"}
+              Role: {seller.role || "N/A"}
             </div>
             {/* You can display phone, createdAt, or other fields as needed */}
           </div>

@@ -1,6 +1,6 @@
 "use client";
 
-export default function SupplierDashboardPage() {
+export default function sellerDashboardPage() {
   // Fetch any dashboard stats here if you want
   return (
     <div>

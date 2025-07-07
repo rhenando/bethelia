@@ -9,7 +9,7 @@ import { auth, db } from "../../lib/firebase"; // update path if needed
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { setUser } from "../../store/authSlice"; // update path if needed
 
-export default function SupplierLogin() {
+export default function sellerLogin() {
   const router = useRouter();
   const dispatch = useDispatch();
   const [phone, setPhone] = useState("");
@@ -17,10 +17,10 @@ export default function SupplierLogin() {
   const user = useSelector((state) => state.auth.user);
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
-  // Redirect to /supplier if already logged in
+  // Redirect to /seller if already logged in
   useEffect(() => {
     if (isLoggedIn && user) {
-      router.replace("/supplier");
+      router.replace("/seller");
     }
   }, [isLoggedIn, user, router]);
 
@@ -36,13 +36,13 @@ export default function SupplierLogin() {
     if (userSnap.exists()) {
       return userSnap.data();
     } else {
-      // Default new users to "supplier"
+      // Default new users to "seller"
       const newUser = {
         uid: firebaseUser.uid,
         email: firebaseUser.email,
         displayName: firebaseUser.displayName || "",
         photoURL: firebaseUser.photoURL || "",
-        role: "supplier",
+        role: "seller",
         createdAt: Date.now(),
       };
       await setDoc(userRef, newUser);
@@ -66,8 +66,8 @@ export default function SupplierLogin() {
       // Store in Redux using setUser
       dispatch(setUser(userData));
 
-      // Always redirect to /supplier
-      router.replace("/supplier");
+      // Always redirect to /seller
+      router.replace("/seller");
     } catch (error) {
       alert(error.message);
     }
@@ -84,9 +84,7 @@ export default function SupplierLogin() {
         <ChevronLeft size={28} />
       </button>
       <div className='w-full max-w-md flex flex-col items-center'>
-        <h1 className='text-3xl font-bold mb-8 text-center'>
-          Supplier Sign In
-        </h1>
+        <h1 className='text-3xl font-bold mb-8 text-center'>seller Sign In</h1>
 
         {/* Phone Input */}
         <label className='block w-full text-gray-900 font-semibold mb-1 text-sm'>

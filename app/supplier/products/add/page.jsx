@@ -139,7 +139,7 @@ export default function AddProduct({ onBack }) {
       return;
     }
     if (!authUser?.uid) {
-      toast.error("Login as supplier to add products.");
+      toast.error("Login as seller to add products.");
       return;
     }
     if (mainImages.length === 0) {
@@ -211,7 +211,7 @@ export default function AddProduct({ onBack }) {
         images: mainImageUrls,
         mainImage: mainImageUrls[0],
         variants: variantsWithUrls,
-        supplierId: authUser.uid,
+        sellerId: authUser.uid,
         createdAt: serverTimestamp(),
         status: form.status,
         sku: form.sku || "",

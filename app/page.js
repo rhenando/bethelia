@@ -263,7 +263,7 @@ export default function HomePage() {
             </div>
           </div>
           <a
-            href='/supplier-login'
+            href='/seller-login'
             className='inline-block bg-white text-blue-700 px-4 py-2 rounded-full font-semibold shadow hover:bg-blue-50 transition mt-2 self-end'
           >
             Start Selling

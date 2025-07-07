@@ -10,7 +10,7 @@ function formatPrice(amount) {
   );
 }
 
-function SupplierProducts({ products = [], onEditProduct, onDeleteProduct }) {
+function sellerProducts({ products = [], onEditProduct, onDeleteProduct }) {
   const router = useRouter();
 
   const handleDelete = (prod) => {
@@ -33,7 +33,7 @@ function SupplierProducts({ products = [], onEditProduct, onDeleteProduct }) {
           <p className='text-xs mb-3'>Start by adding your first product.</p>
           <button
             className='mt-6 w-full px-4 py-2 border border-[var(--primary)] text-[var(--primary)] rounded hover:bg-blue-50 transition font-bold'
-            onClick={() => router.push("/supplier/products/add")}
+            onClick={() => router.push("/seller/products/add")}
           >
             + Add New Product
           </button>
@@ -116,7 +116,7 @@ function SupplierProducts({ products = [], onEditProduct, onDeleteProduct }) {
           </div>
           <button
             className='mt-6 w-full px-4 py-2 border border-[var(--primary)] text-[var(--primary)] rounded hover:bg-blue-50 transition font-bold'
-            onClick={() => router.push("/supplier/products/add")}
+            onClick={() => router.push("/seller/products/add")}
           >
             + Add New Product
           </button>
@@ -126,4 +126,4 @@ function SupplierProducts({ products = [], onEditProduct, onDeleteProduct }) {
   );
 }
 
-export default SupplierProducts;
+export default sellerProducts;

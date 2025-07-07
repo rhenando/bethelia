@@ -26,7 +26,7 @@ const DEFAULT_DOCS = [
   "Platform-specific Docs (e.g., signed agreement, product liability insurance)",
 ];
 
-function SupplierDocuments() {
+function sellerDocuments() {
   const authUser = useSelector((state) => state.auth.user);
   const uid = authUser?.uid;
   const [loading, setLoading] = useState(true);
@@ -97,7 +97,7 @@ function SupplierDocuments() {
       const safeName = getDocKey(docName);
       const storageRef = ref(
         storage,
-        `suppliers/${uid}/documents/${safeName}_${Date.now()}`
+        `sellers/${uid}/documents/${safeName}_${Date.now()}`
       );
       await uploadBytes(storageRef, file);
       const url = await getDownloadURL(storageRef);
@@ -140,7 +140,7 @@ function SupplierDocuments() {
 
       <div className='mb-2 text-gray-500'>
         Upload/manage your required documents and keep your authorized
-        representative’s info up to date for supplier verification and payouts.
+        representative’s info up to date for seller verification and payouts.
       </div>
 
       {/* Basic Info Fields */}
@@ -176,7 +176,7 @@ function SupplierDocuments() {
           <input
             type='email'
             className='w-full rounded px-3 py-2 border text-sm'
-            placeholder='e.g. supplier@email.com'
+            placeholder='e.g. seller@email.com'
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
@@ -232,4 +232,4 @@ function SupplierDocuments() {
   );
 }
 
-export default SupplierDocuments;
+export default sellerDocuments;

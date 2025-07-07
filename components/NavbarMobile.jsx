@@ -8,7 +8,7 @@ import { useState } from "react";
 const navItems = [
   { label: "Home", href: "/", icon: Home },
   { label: "Categories", href: "/categories", icon: Blocks },
-  { label: "Supplier", href: "/supplier-list", icon: Store },
+  { label: "seller", href: "/seller-list", icon: Store },
   { label: "Cart", href: "/cart", icon: ShoppingCart },
   { label: "Account", href: "/account", icon: User },
 ];
@@ -19,27 +19,25 @@ export default function NavbarMobile() {
   const pathname = usePathname();
   const router = useRouter();
   const authUser = useSelector((state) => state.auth.user);
-  // Make sure the user role is present in the auth slice, e.g., authUser?.role
   const [showLogin, setShowLogin] = useState(false);
 
   // Handle Account click with role check
   const handleAccountClick = (e) => {
+    e.preventDefault();
     if (!authUser) {
-      e.preventDefault();
       setShowLogin(true);
       return;
     }
-    // User is logged in, check role
-    e.preventDefault();
-    if (authUser.role === "supplier") {
-      router.push("/supplier");
+    if (authUser.role === "seller") {
+      router.push("/seller");
+    } else if (authUser.role === "buyer") {
+      router.push("/buyer");
     } else {
-      // Default to /account for buyers or any other role
       router.push("/account");
     }
   };
 
-  // Example login modal (replace with your actual login dialog component)
+  // Login Modal component
   const LoginModal = ({ open, onClose }) =>
     !open ? null : (
       <div className='fixed inset-0 bg-black/30 z-[99999] flex items-center justify-center'>
