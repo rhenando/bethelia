@@ -89,7 +89,7 @@ export default function SupplierLayout({ children }) {
     try {
       await signOut(auth); // Firebase logout
       dispatch(clearUser()); // Redux: clear user state
-      router.replace("/login"); // Redirect to login page
+      router.replace("/supplier-login"); // Redirect to login page
     } catch (error) {
       alert("Logout failed: " + error.message);
     }

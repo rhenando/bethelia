@@ -8,7 +8,7 @@ import { useState } from "react";
 const navItems = [
   { label: "Home", href: "/", icon: Home },
   { label: "Categories", href: "/categories", icon: Blocks },
-  { label: "Supplier", href: "/", icon: Store },
+  { label: "Supplier", href: "/supplier-list", icon: Store },
   { label: "Cart", href: "/cart", icon: ShoppingCart },
   { label: "Account", href: "/account", icon: User },
 ];
@@ -61,7 +61,7 @@ export default function NavbarMobile() {
             className='w-full py-2 px-4 rounded bg-[var(--primary)] text-white font-semibold'
             onClick={() => {
               onClose();
-              router.push("/login");
+              router.push("/supplier-login");
             }}
           >
             Log In
