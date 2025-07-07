@@ -87,9 +87,9 @@ export default function sellerLayout({ children }) {
 
   const handleLogout = async () => {
     try {
-      await signOut(auth); // Firebase logout
-      dispatch(clearUser()); // Redux: clear user state
-      router.replace("/seller-login"); // Redirect to login page
+      await signOut(auth);
+      dispatch(clearUser());
+      router.replace("/");
     } catch (error) {
       alert("Logout failed: " + error.message);
     }

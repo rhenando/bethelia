@@ -79,7 +79,7 @@ export default function BuyerLayout({ children }) {
     try {
       await signOut(auth); // Firebase logout
       dispatch(clearUser()); // Redux: clear user state
-      router.replace("/buyer-login"); // Redirect to login page
+      router.replace("/"); // Redirect to login page
     } catch (error) {
       alert("Logout failed: " + error.message);
     }

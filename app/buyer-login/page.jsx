@@ -4,9 +4,9 @@ import { useRouter } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
 import { ChevronLeft } from "lucide-react";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { auth, db } from "../../lib/firebase"; // update path if needed
+import { auth, db } from "../../lib/firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import { setUser } from "../../store/authSlice"; // update path if needed
+import { setUser } from "../../store/authSlice";
 
 export default function Login() {
   const router = useRouter();
@@ -16,18 +16,16 @@ export default function Login() {
   const user = useSelector((state) => state.auth.user);
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
-  // Redirect to /buyer if already logged in
   useEffect(() => {
     if (isLoggedIn && user) {
       router.replace("/buyer");
     }
   }, [isLoggedIn, user, router]);
 
-  // Uniform button classes
   const btn =
     "w-full bg-[var(--primary)] text-white text-lg rounded-md py-3 font-semibold hover:brightness-90 transition border-0 focus:outline-none";
 
-  // Get or create user in Firestore, return the user object with role
+  // Get or create user in Firestore
   const getOrCreateUser = async (firebaseUser) => {
     const userRef = doc(db, "users", firebaseUser.uid);
     const userSnap = await getDoc(userRef);
@@ -35,7 +33,6 @@ export default function Login() {
     if (userSnap.exists()) {
       return userSnap.data();
     } else {
-      // Default new users to "buyer"
       const newUser = {
         uid: firebaseUser.uid,
         email: firebaseUser.email,
@@ -49,20 +46,13 @@ export default function Login() {
     }
   };
 
-  // Google sign-in handler
   const handleGoogleSignIn = async () => {
     try {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
       const firebaseUser = result.user;
-
-      // Get or create user in Firestore, get their role
       const userData = await getOrCreateUser(firebaseUser);
-
-      // Store in Redux using setUser
       dispatch(setUser(userData));
-
-      // Always redirect to /buyer
       router.replace("/buyer");
     } catch (error) {
       alert(error.message);
@@ -70,33 +60,33 @@ export default function Login() {
   };
 
   return (
-    <div className='min-h-screen flex items-center justify-center bg-white px-4 py-6 relative'>
+    <div className='min-h-screen flex flex-col justify-center items-center bg-white px-4 relative overflow-y-auto w-full max-w-[430px] mx-auto'>
       {/* Back Button */}
       <button
-        className='absolute left-4 top-4 p-2'
+        className='absolute left-3 top-3 p-2 z-10'
         onClick={() => router.back()}
         aria-label='Go back'
       >
         <ChevronLeft size={28} />
       </button>
-      <div className='w-full max-w-md flex flex-col items-center'>
-        <h1 className='text-3xl font-bold mb-8 text-center'>
+
+      <div className='w-full flex flex-col items-center'>
+        <h1 className='text-2xl font-bold mb-6 text-center tracking-tight'>
           Sign In To Continue
         </h1>
 
         {/* Phone Input */}
-        <label className='block w-full text-gray-900 font-semibold mb-1 text-sm'>
+        <label className='block w-full text-gray-900 font-semibold mb-1 text-xs'>
           PHONE NUMBER
         </label>
-        <div className='flex w-full mb-6'>
-          <div className='flex items-center border border-gray-300 rounded-l-md bg-gray-50 px-4 py-2 text-base font-semibold'>
-            PH&nbsp;&nbsp;{" "}
-            <span className='font-normal text-gray-600'>+63</span>
+        <div className='flex w-full mb-5'>
+          <div className='flex items-center border border-gray-300 rounded-l-md bg-gray-50 px-3 py-2 text-base font-semibold'>
+            PH <span className='font-normal text-gray-600 ml-2'>+63</span>
           </div>
           <input
             type='tel'
             placeholder='9XXXXXXXXX'
-            className='flex-1 border-t border-b border-r border-gray-300 rounded-r-md px-4 py-2 outline-none text-lg'
+            className='flex-1 border-t border-b border-r border-gray-300 rounded-r-md px-3 py-2 outline-none text-base'
             value={phone}
             maxLength={10}
             onChange={(e) => setPhone(e.target.value.replace(/[^0-9]/g, ""))}
@@ -107,28 +97,28 @@ export default function Login() {
         {/* OR Divider */}
         <div className='w-full flex items-center mb-4'>
           <div className='flex-1 h-px bg-gray-200' />
-          <span className='px-3 text-gray-400 text-base font-semibold'>OR</span>
+          <span className='px-2 text-gray-400 text-sm font-semibold'>OR</span>
           <div className='flex-1 h-px bg-gray-200' />
         </div>
 
         {/* Social Buttons */}
         <button className={`${btn} mb-3`} onClick={handleGoogleSignIn}>
-          Sign in using Google
+          Sign in with Google
         </button>
-        <button className={`${btn} mb-3`}>Sign in using Facebook</button>
-        <button className={`${btn} mb-10`}>Sign in using Apple</button>
+        <button className={`${btn} mb-3`}>Sign in with Facebook</button>
+        <button className={`${btn} mb-7`}>Sign in with Apple</button>
 
         {/* Sign Up Section */}
-        <div className='text-center text-black text-base w-full'>
-          Don't Have An Account?{" "}
+        <div className='text-center text-black text-sm w-full mt-auto'>
+          Don't Have An Account?
           <button
-            className='text-[var(--primary)] underline font-semibold mb-4'
+            className='block w-full text-[var(--primary)] underline font-semibold mt-2'
             onClick={() => router.push("/signup")}
           >
             Sign Up!
           </button>
           <button
-            className='w-full bg-[var(--primary)] text-white text-xl rounded-md py-3  font-bold hover:brightness-90 transition border-0 focus:outline-none'
+            className='w-full bg-[var(--primary)] text-white text-lg rounded-md py-3 font-bold hover:brightness-90 transition mt-2'
             onClick={() => router.push("/signup")}
           >
             Sign Up
