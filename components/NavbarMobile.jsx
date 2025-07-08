@@ -13,6 +13,7 @@ const navItems = [
   { label: "Account", href: "/account", icon: User },
 ];
 
+// TODO: Replace with Redux or actual cart state!
 const cartCount = 0;
 
 export default function NavbarMobile() {
@@ -70,9 +71,17 @@ export default function NavbarMobile() {
 
   return (
     <>
+      {/* Always visible mobile navbar */}
       <nav
         role='navigation'
-        className='fixed bottom-0 left-0 w-full bg-white dark:bg-background border-t z-[9999] flex justify-around py-3 shadow'
+        aria-label='Mobile navigation'
+        className='
+          fixed bottom-0 left-0 right-0 w-full 
+          bg-white dark:bg-background border-t 
+          z-[2147483647] flex justify-around py-3 shadow
+          touch-manipulation
+        '
+        style={{ WebkitTapHighlightColor: "transparent" }}
       >
         {navItems.map(({ label, href, icon: Icon }) => {
           const isActive = pathname === href || pathname.startsWith(href + "/");
@@ -144,6 +153,7 @@ export default function NavbarMobile() {
           );
         })}
       </nav>
+
       {/* Login Modal */}
       <LoginModal open={showLogin} onClose={() => setShowLogin(false)} />
     </>
