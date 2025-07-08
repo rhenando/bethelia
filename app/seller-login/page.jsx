@@ -84,7 +84,7 @@ export default function sellerLogin() {
         <ChevronLeft size={28} />
       </button>
       <div className='w-full max-w-md flex flex-col items-center'>
-        <h1 className='text-3xl font-bold mb-8 text-center'>seller Sign In</h1>
+        <h1 className='text-3xl font-bold mb-8 text-center'>Seller Sign In</h1>
 
         {/* Phone Input */}
         <label className='block w-full text-gray-900 font-semibold mb-1 text-sm'>
