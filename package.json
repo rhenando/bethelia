@@ -44,6 +44,7 @@
     "embla-carousel-react": "^8.6.0",
     "firebase": "^11.10.0",
     "firebase-admin": "^13.4.0",
+    "git-filter-repo": "^0.0.30",
     "input-otp": "^1.4.2",
     "keen-slider": "^6.8.6",
     "lucide-react": "^0.525.0",
