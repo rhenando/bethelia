@@ -28,21 +28,30 @@ export default function sellerLogin() {
   const btn =
     "w-full bg-[var(--primary)] text-white text-lg rounded-md py-3 font-semibold hover:brightness-90 transition border-0 focus:outline-none";
 
-  // Get or create user in Firestore, return the user object with role
+  // --- Multi-role-aware: Get or create user in Firestore, always append 'seller' role ---
   const getOrCreateUser = async (firebaseUser) => {
     const userRef = doc(db, "users", firebaseUser.uid);
     const userSnap = await getDoc(userRef);
 
     if (userSnap.exists()) {
-      return userSnap.data();
+      // Existing user: add "seller" to roles if not already present
+      const data = userSnap.data();
+      let roles = data.roles || [];
+
+      if (!roles.includes("seller")) {
+        roles = [...roles, "seller"];
+        await setDoc(userRef, { ...data, roles }, { merge: true });
+      }
+      // Always return up-to-date roles
+      return { ...data, roles };
     } else {
-      // Default new users to "seller"
+      // New user: create with "seller" role
       const newUser = {
         uid: firebaseUser.uid,
         email: firebaseUser.email,
         displayName: firebaseUser.displayName || "",
         photoURL: firebaseUser.photoURL || "",
-        role: "seller",
+        roles: ["seller"],
         createdAt: Date.now(),
       };
       await setDoc(userRef, newUser);
@@ -60,7 +69,7 @@ export default function sellerLogin() {
       const result = await signInWithPopup(auth, provider);
       const firebaseUser = result.user;
 
-      // Get or create user in Firestore, get their role
+      // Get or create user in Firestore, always append "seller" role
       const userData = await getOrCreateUser(firebaseUser);
 
       // Store in Redux using setUser

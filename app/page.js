@@ -1,8 +1,13 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Heart, ShoppingCart, Search } from "lucide-react";
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
+import { useSelector, useDispatch } from "react-redux";
+import { clearUser } from "@/store/authSlice";
+import { useRouter } from "next/navigation";
+import { db } from "@/lib/firebase";
+import { collection, getDocs, query, orderBy } from "firebase/firestore";
 
 // --- Promo banners for the carousel ---
 const promoBanners = [
@@ -35,30 +40,6 @@ const promoBanners = [
   },
 ];
 
-// --- Categories ---
-const categories = [
-  {
-    name: "Shoes",
-    icon: "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=64&q=80",
-  },
-  {
-    name: "T-shirts",
-    icon: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=64&q=80",
-  },
-  {
-    name: "Bags",
-    icon: "https://images.unsplash.com/photo-1465101162946-4377e57745c3?auto=format&fit=crop&w=64&q=80",
-  },
-  {
-    name: "Jeans",
-    icon: "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=64&q=80",
-  },
-  {
-    name: "Sunglasses",
-    icon: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=64&q=80",
-  },
-];
-
 // --- Offers ---
 const offers = [
   { label: "15% off" },
@@ -68,50 +49,18 @@ const offers = [
   { label: "20% off" },
 ];
 
-// --- Products ---
-const products = [
-  {
-    id: "1",
-    name: "Classic White T-shirt",
-    price: 29.99,
-    image:
-      "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "2",
-    name: "Leather Backpack",
-    price: 120.0,
-    image:
-      "https://images.unsplash.com/photo-1465101162946-4377e57745c3?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "3",
-    name: "Leather Backpack",
-    price: 120.0,
-    image:
-      "https://images.unsplash.com/photo-1465101162946-4377e57745c3?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "4",
-    name: "Smart Watch",
-    price: 199.0,
-    image:
-      "https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b?auto=format&fit=crop&w=400&q=80",
-  },
-];
-
-// --- PromoBannerCarousel with Keen Slider Parallax & Slide Bar ---
+// --- PromoBannerCarousel (unchanged) ---
 function PromoBannerCarousel({ banners }) {
-  const timer = React.useRef();
-  const [pause, setPause] = React.useState(false);
-  const [currentSlide, setCurrentSlide] = React.useState(0);
-  const imageRefs = React.useRef([]);
+  const timer = useRef();
+  const [pause, setPause] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const imageRefs = useRef([]);
   const [sliderRef, instanceRef] = useKeenSlider({
     loop: true,
     drag: true,
     slides: { perView: 1 },
     animation: {
-      duration: 1200, // 1.2s for slomo
+      duration: 1200,
       easing: (t) => t,
     },
     detailsChanged(s) {
@@ -201,9 +150,83 @@ function PromoBannerCarousel({ banners }) {
 }
 
 export default function HomePage() {
-  // Demo counts
-  const cartCount = 3;
   const wishCount = 2;
+  const cartCount = 3;
+
+  // Auth logic for Sell With Us banner
+  const authUser = useSelector((state) => state.auth.user);
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
+
+  // ---- FETCH CATEGORIES from Firestore ----
+  const [categories, setCategories] = useState([]);
+  const [loadingCategories, setLoadingCategories] = useState(true);
+
+  // ---- FETCH PRODUCTS from Firestore ----
+  const [products, setProducts] = useState([]);
+  const [loadingProducts, setLoadingProducts] = useState(true);
+
+  useEffect(() => {
+    async function fetchCategories() {
+      try {
+        const q = query(collection(db, "categories"), orderBy("order"));
+        const snap = await getDocs(q);
+        const cats = snap.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setCategories(cats);
+      } catch (err) {
+        setCategories([]);
+      } finally {
+        setLoadingCategories(false);
+      }
+    }
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        // Most recent first by createdAt (optional)
+        const q = query(
+          collection(db, "products"),
+          orderBy("createdAt", "desc")
+        );
+        const snap = await getDocs(q);
+        const items = snap.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setProducts(items);
+      } catch (err) {
+        setProducts([]);
+      } finally {
+        setLoadingProducts(false);
+      }
+    }
+    fetchProducts();
+  }, []);
+
+  const handleStartSelling = (e) => {
+    if (!authUser) return;
+    if (Array.isArray(authUser.roles) && authUser.roles.includes("seller")) {
+      e.preventDefault();
+      router.push("/seller");
+      return;
+    }
+    if (Array.isArray(authUser.roles) && authUser.roles.includes("buyer")) {
+      e.preventDefault();
+      setShowLogoutDialog(true);
+    }
+  };
+
+  const handleConfirmLogout = async () => {
+    setShowLogoutDialog(false);
+    dispatch(clearUser());
+    router.push("/seller-login");
+  };
 
   return (
     <div className='max-w-md mx-auto px-0 bg-white min-h-screen relative'>
@@ -265,32 +288,68 @@ export default function HomePage() {
           <a
             href='/seller-login'
             className='inline-block bg-white text-blue-700 px-4 py-2 rounded-full font-semibold shadow hover:bg-blue-50 transition mt-2 self-end'
+            onClick={handleStartSelling}
           >
             Start Selling
           </a>
         </div>
       </div>
 
+      {/* Logout Dialog */}
+      {showLogoutDialog && (
+        <div className='fixed inset-0 z-50 bg-black/30 flex items-center justify-center'>
+          <div className='bg-white rounded-xl shadow-xl p-6 max-w-xs w-full flex flex-col items-center'>
+            <div className='text-lg font-semibold mb-2 text-center'>
+              You will be logged out as buyer.
+            </div>
+            <div className='text-gray-500 text-sm mb-4 text-center'>
+              To continue as a seller, we need to log you out of your buyer
+              account. Continue?
+            </div>
+            <div className='flex gap-4'>
+              <button
+                className='bg-blue-600 text-white px-4 py-2 rounded-md'
+                onClick={handleConfirmLogout}
+              >
+                Yes
+              </button>
+              <button
+                className='bg-gray-100 text-gray-700 px-4 py-2 rounded-md'
+                onClick={() => setShowLogoutDialog(false)}
+              >
+                No
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Categories */}
       <h2 className='font-semibold text-base px-4 mt-2 mb-1'>Categories</h2>
       <div className='flex overflow-x-auto gap-4 px-4 pb-2'>
-        {categories.map((cat, i) => (
-          <div
-            key={cat.name}
-            className='flex flex-col items-center min-w-[60px]'
-          >
-            <div className='w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-1'>
-              <img
-                src={cat.icon}
-                alt={cat.name}
-                className='h-7 w-7 object-contain'
-              />
+        {loadingCategories ? (
+          <div className='text-gray-400'>Loading...</div>
+        ) : categories.length === 0 ? (
+          <div className='text-gray-400'>No categories found.</div>
+        ) : (
+          categories.map((cat) => (
+            <div
+              key={cat.id || cat.name}
+              className='flex flex-col items-center min-w-[60px]'
+            >
+              <div className='w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-1'>
+                <img
+                  src={cat.icon || cat.imageUrl}
+                  alt={cat.name}
+                  className='h-7 w-7 object-contain'
+                />
+              </div>
+              <span className='text-xs font-medium text-gray-700'>
+                {cat.name}
+              </span>
             </div>
-            <span className='text-xs font-medium text-gray-700'>
-              {cat.name}
-            </span>
-          </div>
-        ))}
+          ))
+        )}
       </div>
 
       {/* Brand Offers */}
@@ -314,31 +373,45 @@ export default function HomePage() {
         </a>
       </div>
       <div className='grid grid-cols-2 gap-4 px-4 mt-2'>
-        {products.map((product) => (
-          <div
-            key={product.id}
-            className='relative bg-white rounded-xl shadow p-2 flex flex-col items-center'
-          >
-            <button
-              className='absolute top-2 right-2 bg-white/90 rounded-full p-1 z-10'
-              tabIndex={-1}
-              aria-label='Add to favorites'
+        {loadingProducts ? (
+          <>
+            <div className='col-span-2 text-center text-gray-400'>
+              Loading...
+            </div>
+          </>
+        ) : products.length === 0 ? (
+          <>
+            <div className='col-span-2 text-center text-gray-400'>
+              No products found.
+            </div>
+          </>
+        ) : (
+          products.map((product) => (
+            <div
+              key={product.id}
+              className='relative bg-white rounded-xl shadow p-2 flex flex-col items-center'
             >
-              <Heart className='w-5 h-5 text-gray-300 hover:text-red-500' />
-            </button>
-            <img
-              src={product.image}
-              alt={product.name}
-              className='h-28 w-28 object-cover rounded-md mb-2'
-            />
-            <div className='font-semibold text-center text-base'>
-              {product.name}
+              <button
+                className='absolute top-2 right-2 bg-white/90 rounded-full p-1 z-10'
+                tabIndex={-1}
+                aria-label='Add to favorites'
+              >
+                <Heart className='w-5 h-5 text-gray-300 hover:text-red-500' />
+              </button>
+              <img
+                src={product.mainImage || (product.images?.[0] ?? "")}
+                alt={product.name}
+                className='h-28 w-28 object-cover rounded-md mb-2'
+              />
+              <div className='font-semibold text-center text-base'>
+                {product.name}
+              </div>
+              <div className='text-green-700 font-bold text-lg mt-1'>
+                ₱{product.price}
+              </div>
             </div>
-            <div className='text-green-700 font-bold text-lg mt-1'>
-              ₱{product.price}
-            </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </div>
   );

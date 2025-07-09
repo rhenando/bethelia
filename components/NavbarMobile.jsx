@@ -29,9 +29,9 @@ export default function NavbarMobile() {
       setShowLogin(true);
       return;
     }
-    if (authUser.role === "seller") {
+    if (authUser.roles && authUser.roles.includes("seller")) {
       router.push("/seller");
-    } else if (authUser.role === "buyer") {
+    } else if (authUser.roles && authUser.roles.includes("buyer")) {
       router.push("/buyer");
     } else {
       router.push("/account");

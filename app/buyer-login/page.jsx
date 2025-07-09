@@ -25,20 +25,28 @@ export default function Login() {
   const btn =
     "w-full bg-[var(--primary)] text-white text-lg rounded-md py-3 font-semibold hover:brightness-90 transition border-0 focus:outline-none";
 
-  // Get or create user in Firestore
+  // Get or create user in Firestore, always add "buyer" to roles array
   const getOrCreateUser = async (firebaseUser) => {
     const userRef = doc(db, "users", firebaseUser.uid);
     const userSnap = await getDoc(userRef);
 
     if (userSnap.exists()) {
-      return userSnap.data();
+      // Existing user: add "buyer" to roles if not already present
+      const data = userSnap.data();
+      let roles = data.roles || [];
+      if (!roles.includes("buyer")) {
+        roles = [...roles, "buyer"];
+        await setDoc(userRef, { ...data, roles }, { merge: true });
+      }
+      return { ...data, roles };
     } else {
+      // New user: create with "buyer" role
       const newUser = {
         uid: firebaseUser.uid,
         email: firebaseUser.email,
         displayName: firebaseUser.displayName || "",
         photoURL: firebaseUser.photoURL || "",
-        role: "buyer",
+        roles: ["buyer"],
         createdAt: Date.now(),
       };
       await setDoc(userRef, newUser);

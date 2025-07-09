@@ -20,6 +20,7 @@ export const metadata = {
   description:
     "Explore mobiles, fashion, home appliances, and more at Bethelia. Secure payments. Fast delivery. Easy returns.",
   keywords: "shop online philippines, bethelia, mobiles, appliances, fashion",
+  metadataBase: new URL("https://bethelia.com"), // <-- ADD THIS LINE
   openGraph: {
     title: "Bethelia - Shop Online Philippines",
     description: "Fast delivery, secure checkout, the best brands in PH.",

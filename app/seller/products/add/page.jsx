@@ -1,9 +1,16 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import { db, storage } from "@/lib/firebase";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  orderBy,
+  query,
+  serverTimestamp,
+} from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -63,14 +70,31 @@ export default function AddProduct({ onBack }) {
   ]);
   const [saving, setSaving] = useState(false);
 
-  const categoryOptions = [
-    "Electronics",
-    "Fashion",
-    "Home & Kitchen",
-    "Toys",
-    "Beauty",
-    "Books",
-  ];
+  // Dynamically loaded categories from Firestore
+  const [categoryOptions, setCategoryOptions] = useState([]);
+  const [loadingCategories, setLoadingCategories] = useState(true);
+
+  // Fetch categories from Firestore on mount
+  useEffect(() => {
+    async function fetchCategories() {
+      try {
+        const q = query(collection(db, "categories"), orderBy("order"));
+        const snap = await getDocs(q);
+        setCategoryOptions(
+          snap.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }))
+        );
+      } catch (err) {
+        setCategoryOptions([]);
+        toast.error("Failed to load categories");
+      }
+      setLoadingCategories(false);
+    }
+    fetchCategories();
+  }, []);
+
   const shippingClassOptions = [
     "Standard",
     "Fragile",
@@ -300,11 +324,17 @@ export default function AddProduct({ onBack }) {
             required
           >
             <option value=''>Category*</option>
-            {categoryOptions.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
+            {loadingCategories ? (
+              <option disabled>Loading...</option>
+            ) : categoryOptions.length === 0 ? (
+              <option disabled>No categories</option>
+            ) : (
+              categoryOptions.map((cat) => (
+                <option key={cat.id} value={cat.name}>
+                  {cat.name}
+                </option>
+              ))
+            )}
           </select>
         </div>
         <textarea
