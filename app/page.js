@@ -153,7 +153,7 @@ export default function HomePage() {
   const wishCount = 2;
   const cartCount = 3;
 
-  // Auth logic for Sell With Us banner
+  // Auth logic for Sell With Us banner (doesn't block page render)
   const authUser = useSelector((state) => state.auth.user);
   const dispatch = useDispatch();
   const router = useRouter();
@@ -210,15 +210,25 @@ export default function HomePage() {
   }, []);
 
   const handleStartSelling = (e) => {
-    if (!authUser) return;
-    if (Array.isArray(authUser.roles) && authUser.roles.includes("seller")) {
-      e.preventDefault();
-      router.push("/seller");
+    e.preventDefault();
+
+    if (!authUser || !Array.isArray(authUser.roles)) {
+      // Not logged in, just go to seller-login (no dialog, UX for guest)
+      router.push("/seller-login");
       return;
     }
-    if (Array.isArray(authUser.roles) && authUser.roles.includes("buyer")) {
-      e.preventDefault();
+
+    const isSeller = authUser.roles.includes("seller");
+    const isBuyer = authUser.roles.includes("buyer");
+
+    if (isBuyer && isSeller) {
       setShowLogoutDialog(true);
+    } else if (isSeller) {
+      router.push("/seller");
+    } else if (isBuyer) {
+      setShowLogoutDialog(true);
+    } else {
+      router.push("/seller-login");
     }
   };
 
@@ -339,13 +349,14 @@ export default function HomePage() {
             >
               <div className='w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-1'>
                 <img
-                  src={cat.icon || cat.imageUrl}
+                  src={cat.icon || cat.imageUrl || "/placeholder-category.png"}
                   alt={cat.name}
                   className='h-7 w-7 object-contain'
+                  onError={(e) => (e.target.src = "/placeholder-category.png")}
                 />
               </div>
               <span className='text-xs font-medium text-gray-700'>
-                {cat.name}
+                {cat.name || "Unnamed"}
               </span>
             </div>
           ))
@@ -399,15 +410,19 @@ export default function HomePage() {
                 <Heart className='w-5 h-5 text-gray-300 hover:text-red-500' />
               </button>
               <img
-                src={product.mainImage || (product.images?.[0] ?? "")}
-                alt={product.name}
+                src={
+                  product.mainImage ||
+                  (product.images?.[0] ?? "/placeholder-product.png")
+                }
+                alt={product.name || "Product"}
                 className='h-28 w-28 object-cover rounded-md mb-2'
+                onError={(e) => (e.target.src = "/placeholder-product.png")}
               />
               <div className='font-semibold text-center text-base'>
-                {product.name}
+                {product.name || "Unnamed"}
               </div>
               <div className='text-green-700 font-bold text-lg mt-1'>
-                ₱{product.price}
+                ₱{product.price ?? "N/A"}
               </div>
             </div>
           ))
