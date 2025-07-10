@@ -2,13 +2,13 @@
   "name": "betheliaph",
   "version": "0.1.0",
   "private": true,
- "scripts": {
-  "dev": "next dev",
-  "build": "next build && next export",
-  "start": "next start",
-  "lint": "next lint",
-  "postbuild": "next-sitemap"
-},
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "postbuild": "next-sitemap"
+  },
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",
     "@radix-ui/react-accordion": "^1.2.11",
