@@ -48,12 +48,12 @@ export default function HomePage() {
 
       <section className='px-4 mt-2'>
         <h2 className='font-semibold text-base mb-1'>Categories</h2>
-        {loadingCategories ? (
-          <p className='text-gray-400'>Loading...</p>
-        ) : (
-          <CategoriesMarquee categories={categories} />
-        )}
+        <CategoriesMarquee
+          categories={categories}
+          isLoading={loadingCategories}
+        />
       </section>
+
       <ProductGrid products={products} loading={loadingProducts} />
     </div>
   );
