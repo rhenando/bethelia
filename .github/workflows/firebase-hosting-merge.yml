@@ -24,9 +24,6 @@ jobs:
       - name: Build Next.js static site
         run: npm run build
 
-      - name: Export static site
-        run: npm run export
-
       - name: List output files (debugging)
         run: ls -al out/
 
