@@ -47,3 +47,18 @@ serviceAccountKey.json
 /sitemap.xml
 /sitemap-0.xml
 /robots.txt
+
+
+# Firebase
+.firebase/
+
+# Next.js
+.next/
+out/
+y/
+
+# Logs
+*.log
+
+# System files
+.DS_Store
