@@ -4,7 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { LogOut, BarChart2, Package, ShoppingBag, Mail } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import {
   useUser,
@@ -13,8 +13,8 @@ import {
   SignedOut,
   RedirectToSignIn,
 } from "@clerk/nextjs";
+import { useFirebaseAuth } from "@/lib/useFirebaseAuth";
 
-// --- Buyer Tabs ---
 const tabs = [
   {
     label: "Dashboard",
@@ -43,25 +43,35 @@ export default function BuyerLayout({ children }) {
   const router = useRouter();
   const { user, isLoaded, isSignedIn } = useUser();
   const { signOut } = useClerk();
+  const { signIntoFirebase } = useFirebaseAuth();
 
   const [buyer, setBuyer] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!isLoaded) return;
+    if (!isLoaded || !isSignedIn || !user) return;
 
-    if (!isSignedIn) {
-      setBuyer(null);
-      setLoading(false);
-      return;
-    }
-
-    const fetchBuyer = async () => {
+    const init = async () => {
       try {
+        await signIntoFirebase();
+
         const docRef = doc(db, "users", user.id);
         const docSnap = await getDoc(docRef);
 
-        if (docSnap.exists()) {
+        if (!docSnap.exists()) {
+          const newBuyer = {
+            id: user.id,
+            email: user.primaryEmailAddress?.emailAddress || "",
+            firstName: user.firstName || "",
+            lastName: user.lastName || "",
+            roles: ["buyer"],
+            createdAt: new Date().toISOString(),
+          };
+
+          await setDoc(docRef, newBuyer);
+          console.log("✅ Firestore user created with buyer role");
+          setBuyer(newBuyer);
+        } else {
           const data = docSnap.data();
           if (data.roles?.includes("buyer")) {
             setBuyer(data);
@@ -69,18 +79,16 @@ export default function BuyerLayout({ children }) {
             console.warn("User does not have 'buyer' role.");
             setBuyer(null);
           }
-        } else {
-          setBuyer(null);
         }
       } catch (err) {
-        console.error("Error fetching buyer:", err);
+        console.error("❌ Error initializing buyer:", err);
         setBuyer(null);
       }
 
       setLoading(false);
     };
 
-    fetchBuyer();
+    init();
   }, [isLoaded, isSignedIn, user]);
 
   const handleLogout = async () => {
@@ -136,7 +144,7 @@ export default function BuyerLayout({ children }) {
             </button>
           </div>
 
-          {/* Tabs/Nav */}
+          {/* Navigation Tabs */}
           <nav className='flex justify-around border-b border-gray-200 bg-gray-50 overflow-x-auto'>
             {tabs.map((tab) => (
               <Link
@@ -154,7 +162,7 @@ export default function BuyerLayout({ children }) {
             ))}
           </nav>
 
-          {/* Content */}
+          {/* Page Content */}
           <div className='p-5 flex-1 overflow-y-auto'>{children}</div>
         </div>
       </SignedIn>

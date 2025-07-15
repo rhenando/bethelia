@@ -1,3 +1,4 @@
+// app/buyer-signup/page.jsx
 "use client";
 
 import { SignUp } from "@clerk/nextjs";
