@@ -6,7 +6,7 @@ export default function LayoutShell({ children }) {
   const pathname = usePathname();
   // Add more routes as needed
   const hideNavbar =
-    pathname === "/buyer-login" ||
+    pathname === "/buyer-signup" ||
     pathname === "/seller-login" ||
     pathname === "/signup" ||
     pathname === "/login";

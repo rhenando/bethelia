@@ -2,23 +2,28 @@ import React, { useRef, useState, useEffect } from "react";
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
 
-export default function PromoBannerCarousel({ banners }) {
+export default function PromoBannerCarousel({ banners = [] }) {
   const timer = useRef();
   const [pause, setPause] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const imageRefs = useRef([]);
+
   const [sliderRef, instanceRef] = useKeenSlider({
     loop: true,
     slides: { perView: 1 },
     animation: { duration: 1200, easing: (t) => t },
     detailsChanged(s) {
+      if (!s.track?.details) return;
+
       s.slides.forEach((slide, idx) => {
         const img = imageRefs.current[idx];
-        if (img)
+        if (img) {
           img.style.transform = `translateX(${
             40 * slide.progress
           }px) scale(1.08)`;
+        }
       });
+
       setCurrentSlide(s.track.details.rel);
     },
     created: (slider) => {
@@ -34,14 +39,15 @@ export default function PromoBannerCarousel({ banners }) {
 
   function autoplay(slider) {
     clearTimeout(timer.current);
-    if (!pause) timer.current = setTimeout(() => slider?.next(), 3000);
+    if (!pause && slider?.track?.details) {
+      timer.current = setTimeout(() => slider.next(), 3000);
+    }
   }
 
   useEffect(() => () => clearTimeout(timer.current), []);
-  useEffect(
-    () => instanceRef.current && autoplay(instanceRef.current),
-    [pause]
-  );
+  useEffect(() => {
+    if (instanceRef.current) autoplay(instanceRef.current);
+  }, [pause]);
 
   imageRefs.current = [];
 

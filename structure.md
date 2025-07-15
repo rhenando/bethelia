@@ -3,117 +3,110 @@
 bethelia
 ├── .next
 │   ├── cache
-│   │   ├── eslint
-│   │   │   └── .cache_liyawk
 │   │   ├── swc
 │   │   │   └── plugins
 │   │   │       └── v7_windows_x86_64_9.0.0
 │   │   ├── webpack
-│   │   │   ├── client-production
-│   │   │   │   ├── 0.pack
-│   │   │   │   └── index.pack
-│   │   │   ├── edge-server-production
-│   │   │   │   ├── 0.pack
-│   │   │   │   └── index.pack
-│   │   │   └── server-production
-│   │   │       ├── 0.pack
-│   │   │       └── index.pack
+│   │   │   ├── client-development
+│   │   │   │   ├── 0.pack.gz
+│   │   │   │   ├── 1.pack.gz
+│   │   │   │   ├── 10.pack.gz
+│   │   │   │   ├── 11.pack.gz
+│   │   │   │   ├── 12.pack.gz
+│   │   │   │   ├── 13.pack.gz
+│   │   │   │   ├── 14.pack.gz
+│   │   │   │   ├── 15.pack.gz
+│   │   │   │   ├── 16.pack.gz
+│   │   │   │   ├── 2.pack.gz
+│   │   │   │   ├── 3.pack.gz
+│   │   │   │   ├── 4.pack.gz
+│   │   │   │   ├── 5.pack.gz
+│   │   │   │   ├── 6.pack.gz
+│   │   │   │   ├── 7.pack.gz
+│   │   │   │   ├── 8.pack.gz
+│   │   │   │   ├── 9.pack.gz
+│   │   │   │   ├── index.pack.gz
+│   │   │   │   └── index.pack.gz.old
+│   │   │   ├── client-development-fallback
+│   │   │   │   ├── 0.pack.gz
+│   │   │   │   └── index.pack.gz
+│   │   │   ├── edge-server-development
+│   │   │   │   ├── 0.pack.gz
+│   │   │   │   ├── 1.pack.gz
+│   │   │   │   ├── 2.pack.gz
+│   │   │   │   ├── 3.pack.gz
+│   │   │   │   ├── 4.pack.gz
+│   │   │   │   ├── index.pack.gz
+│   │   │   │   └── index.pack.gz.old
+│   │   │   └── server-development
+│   │   │       ├── 0.pack.gz
+│   │   │       ├── 1.pack.gz
+│   │   │       ├── 10.pack.gz
+│   │   │       ├── 11.pack.gz
+│   │   │       ├── 12.pack.gz
+│   │   │       ├── 13.pack.gz
+│   │   │       ├── 14.pack.gz
+│   │   │       ├── 15.pack.gz
+│   │   │       ├── 16.pack.gz
+│   │   │       ├── 17.pack.gz
+│   │   │       ├── 18.pack.gz
+│   │   │       ├── 2.pack.gz
+│   │   │       ├── 3.pack.gz
+│   │   │       ├── 4.pack.gz
+│   │   │       ├── 5.pack.gz
+│   │   │       ├── 6.pack.gz
+│   │   │       ├── 7.pack.gz
+│   │   │       ├── 8.pack.gz
+│   │   │       ├── 9.pack.gz
+│   │   │       ├── index.pack.gz
+│   │   │       └── index.pack.gz.old
 │   │   └── .rscinfo
-│   ├── diagnostics
-│   │   ├── build-diagnostics.json
-│   │   └── framework.json
 │   ├── server
 │   │   ├── app
 │   │   │   ├── _not-found
 │   │   │   │   ├── page_client-reference-manifest.js
-│   │   │   │   ├── page.js
-│   │   │   │   └── page.js.nft.json
-│   │   │   ├── buyer
-│   │   │   │   ├── page_client-reference-manifest.js
-│   │   │   │   ├── page.js
-│   │   │   │   └── page.js.nft.json
-│   │   │   ├── buyer-login
-│   │   │   │   ├── page_client-reference-manifest.js
-│   │   │   │   ├── page.js
-│   │   │   │   └── page.js.nft.json
-│   │   │   ├── favicon.ico
-│   │   │   │   ├── route.js
-│   │   │   │   └── route.js.nft.json
-│   │   │   ├── seller
-│   │   │   │   ├── documents
-│   │   │   │   │   ├── page_client-reference-manifest.js
-│   │   │   │   │   ├── page.js
-│   │   │   │   │   └── page.js.nft.json
-│   │   │   │   ├── products
-│   │   │   │   │   ├── add
-│   │   │   │   │   │   ├── page_client-reference-manifest.js
-│   │   │   │   │   │   ├── page.js
-│   │   │   │   │   │   └── page.js.nft.json
-│   │   │   │   │   ├── add.html
-│   │   │   │   │   ├── add.meta
-│   │   │   │   │   ├── add.rsc
-│   │   │   │   │   ├── page_client-reference-manifest.js
-│   │   │   │   │   ├── page.js
-│   │   │   │   │   └── page.js.nft.json
-│   │   │   │   ├── documents.html
-│   │   │   │   ├── documents.meta
-│   │   │   │   ├── documents.rsc
-│   │   │   │   ├── page_client-reference-manifest.js
-│   │   │   │   ├── page.js
-│   │   │   │   ├── page.js.nft.json
-│   │   │   │   ├── products.html
-│   │   │   │   ├── products.meta
-│   │   │   │   └── products.rsc
-│   │   │   ├── seller-login
-│   │   │   │   ├── page_client-reference-manifest.js
-│   │   │   │   ├── page.js
-│   │   │   │   └── page.js.nft.json
-│   │   │   ├── _not-found.html
-│   │   │   ├── _not-found.meta
-│   │   │   ├── _not-found.rsc
-│   │   │   ├── buyer-login.html
-│   │   │   ├── buyer-login.meta
-│   │   │   ├── buyer-login.rsc
-│   │   │   ├── buyer.html
-│   │   │   ├── buyer.meta
-│   │   │   ├── buyer.rsc
-│   │   │   ├── favicon.ico.body
-│   │   │   ├── favicon.ico.meta
-│   │   │   ├── index.html
-│   │   │   ├── index.meta
-│   │   │   ├── index.rsc
+│   │   │   │   └── page.js
 │   │   │   ├── page_client-reference-manifest.js
-│   │   │   ├── page.js
-│   │   │   ├── page.js.nft.json
-│   │   │   ├── seller-login.html
-│   │   │   ├── seller-login.meta
-│   │   │   ├── seller-login.rsc
-│   │   │   ├── seller.html
-│   │   │   ├── seller.meta
-│   │   │   └── seller.rsc
-│   │   ├── chunks
-│   │   │   ├── 150.js
-│   │   │   ├── 167.js
-│   │   │   ├── 188.js
-│   │   │   ├── 399.js
-│   │   │   ├── 447.js
-│   │   │   ├── 548.js
-│   │   │   └── 870.js
-│   │   ├── pages
-│   │   │   ├── _app.js
-│   │   │   ├── _app.js.nft.json
-│   │   │   ├── _document.js
-│   │   │   ├── _document.js.nft.json
-│   │   │   ├── _error.js
-│   │   │   ├── _error.js.nft.json
-│   │   │   ├── 404.html
-│   │   │   └── 500.html
+│   │   │   └── page.js
+│   │   ├── static
+│   │   │   └── webpack
+│   │   │       └── 633457081244afec._.hot-update.json
+│   │   ├── vendor-chunks
+│   │   │   ├── @clerk.js
+│   │   │   ├── @radix-ui.js
+│   │   │   ├── @swc.js
+│   │   │   ├── aria-hidden.js
+│   │   │   ├── clsx.js
+│   │   │   ├── cookie.js
+│   │   │   ├── dequal.js
+│   │   │   ├── dot-case.js
+│   │   │   ├── get-nonce.js
+│   │   │   ├── keen-slider.js
+│   │   │   ├── lower-case.js
+│   │   │   ├── lucide-react.js
+│   │   │   ├── map-obj.js
+│   │   │   ├── next.js
+│   │   │   ├── no-case.js
+│   │   │   ├── react-remove-scroll-bar.js
+│   │   │   ├── react-remove-scroll.js
+│   │   │   ├── react-style-singleton.js
+│   │   │   ├── snake-case.js
+│   │   │   ├── snakecase-keys.js
+│   │   │   ├── sonner.js
+│   │   │   ├── styled-jsx.js
+│   │   │   ├── swr.js
+│   │   │   ├── tailwind-merge.js
+│   │   │   ├── tslib.js
+│   │   │   ├── use-callback-ref.js
+│   │   │   ├── use-sidecar.js
+│   │   │   └── use-sync-external-store.js
 │   │   ├── app-paths-manifest.json
-│   │   ├── functions-config-manifest.json
+│   │   ├── edge-runtime-webpack.js
 │   │   ├── interception-route-rewrite-manifest.js
 │   │   ├── middleware-build-manifest.js
 │   │   ├── middleware-manifest.json
 │   │   ├── middleware-react-loadable-manifest.js
+│   │   ├── middleware.js
 │   │   ├── next-font-manifest.js
 │   │   ├── next-font-manifest.json
 │   │   ├── pages-manifest.json
@@ -124,120 +117,56 @@ bethelia
 │   │   ├── chunks
 │   │   │   ├── app
 │   │   │   │   ├── _not-found
-│   │   │   │   │   └── page-c6c09561c2ad79db.js
-│   │   │   │   ├── buyer
-│   │   │   │   │   ├── layout-fda233b153904622.js
-│   │   │   │   │   └── page-4e3ffa0ed87091a0.js
-│   │   │   │   ├── buyer-login
-│   │   │   │   │   └── page-2b251247623a8d0c.js
-│   │   │   │   ├── seller
-│   │   │   │   │   ├── documents
-│   │   │   │   │   │   └── page-c352009f08026e7e.js
-│   │   │   │   │   ├── products
-│   │   │   │   │   │   ├── add
-│   │   │   │   │   │   │   └── page-8c4efc99d7c11661.js
-│   │   │   │   │   │   └── page-a5f32256c0cd1060.js
-│   │   │   │   │   ├── layout-4098822e0637ad49.js
-│   │   │   │   │   └── page-b22ff1c1548281f1.js
-│   │   │   │   ├── seller-login
-│   │   │   │   │   └── page-11513ce038cad8e2.js
-│   │   │   │   ├── layout-483f0d74f7b5e57b.js
-│   │   │   │   └── page-9faaf971a0e64dcd.js
-│   │   │   ├── pages
-│   │   │   │   ├── _app-92f2aae776f86b9c.js
-│   │   │   │   └── _error-71d2b6a7b832d02a.js
-│   │   │   ├── 314-4c5aaed8a1502bb1.js
-│   │   │   ├── 341.df3329d77a5faa19.js
-│   │   │   ├── 429-846f8ac5fe0ebd25.js
-│   │   │   ├── 472.a3826d29d6854395.js
-│   │   │   ├── 4bd1b696-1ef1e55301f827c6.js
-│   │   │   ├── 510-7f655ea1f682dd9f.js
-│   │   │   ├── 638-0547832a41adf540.js
-│   │   │   ├── 671-5f986947f3ef8144.js
-│   │   │   ├── 684-0fbae289a4d84a37.js
-│   │   │   ├── 71-cd3aa2de4e3fbb35.js
-│   │   │   ├── 848-d350b158dfecf553.js
-│   │   │   ├── 874-16b9129f1b50b443.js
-│   │   │   ├── ae6eea6a-15b112292a2836ce.js
-│   │   │   ├── bc9e92e6-4d0344b47b016caa.js
-│   │   │   ├── framework-f593a28cde54158e.js
-│   │   │   ├── main-app-33268b3037b033db.js
-│   │   │   ├── main-f8719266e809513a.js
-│   │   │   ├── polyfills-42372ed130431b0a.js
-│   │   │   └── webpack-bf492244bc188e53.js
+│   │   │   │   │   └── page.js
+│   │   │   │   ├── layout.js
+│   │   │   │   └── page.js
+│   │   │   ├── _app-pages-browser_node_modules_clerk_nextjs_dist_esm_app-router_client_keyless-creator-reader_js.js
+│   │   │   ├── _app-pages-browser_node_modules_clerk_nextjs_dist_esm_app-router_keyless-actions_js.js
+│   │   │   ├── _app-pages-browser_node_modules_next_dist_client_dev_noop-turbopack-hmr_js.js
+│   │   │   ├── app-pages-internals.js
+│   │   │   ├── main-app.js
+│   │   │   ├── polyfills.js
+│   │   │   └── webpack.js
 │   │   ├── css
-│   │   │   ├── b052219f8b83cbfd.css
-│   │   │   ├── ea7d800c8a680295.css
-│   │   │   └── f30152c0704fba31.css
-│   │   ├── media
-│   │   │   ├── 569ce4b8f30dc480-s.p.woff2
-│   │   │   ├── 747892c23ea88013-s.woff2
-│   │   │   ├── 8d697b304b401681-s.woff2
-│   │   │   ├── 93f479601ee12b01-s.p.woff2
-│   │   │   ├── 9610d9e46709d722-s.woff2
-│   │   │   └── ba015fad6dcf6784-s.woff2
-│   │   └── XPXrHk3R6WBoW36ogB7Fy
-│   │       ├── _buildManifest.js
-│   │       └── _ssgManifest.js
+│   │   │   └── app
+│   │   │       ├── layout.css
+│   │   │       └── page.css
+│   │   ├── development
+│   │   │   ├── _buildManifest.js
+│   │   │   └── _ssgManifest.js
+│   │   └── webpack
+│   │       ├── app
+│   │       │   ├── layout.04f8d1cb57f4b714.hot-update.js
+│   │       │   └── layout.9c97aab2bc608a08.hot-update.js
+│   │       ├── 04f8d1cb57f4b714.webpack.hot-update.json
+│   │       ├── 633457081244afec._.hot-update.json
+│   │       ├── 9c97aab2bc608a08.webpack.hot-update.json
+│   │       ├── webpack.04f8d1cb57f4b714.hot-update.js
+│   │       └── webpack.9c97aab2bc608a08.hot-update.js
 │   ├── types
 │   │   ├── app
-│   │   │   ├── buyer
-│   │   │   │   ├── layout.ts
-│   │   │   │   └── page.ts
-│   │   │   ├── buyer-login
-│   │   │   │   └── page.ts
-│   │   │   ├── seller
-│   │   │   │   ├── documents
-│   │   │   │   │   └── page.ts
-│   │   │   │   ├── products
-│   │   │   │   │   ├── add
-│   │   │   │   │   │   └── page.ts
-│   │   │   │   │   └── page.ts
-│   │   │   │   ├── layout.ts
-│   │   │   │   └── page.ts
-│   │   │   ├── seller-login
-│   │   │   │   └── page.ts
 │   │   │   ├── layout.ts
 │   │   │   └── page.ts
 │   │   ├── cache-life.d.ts
 │   │   └── package.json
 │   ├── app-build-manifest.json
-│   ├── app-path-routes-manifest.json
-│   ├── BUILD_ID
 │   ├── build-manifest.json
-│   ├── export-detail.json
-│   ├── export-marker.json
-│   ├── images-manifest.json
-│   ├── next-minimal-server.js.nft.json
-│   ├── next-server.js.nft.json
 │   ├── package.json
-│   ├── prerender-manifest.json
 │   ├── react-loadable-manifest.json
-│   ├── required-server-files.json
-│   ├── routes-manifest.json
 │   └── trace
 ├── app
-│   ├── buyer
-│   │   ├── layout.jsx
+│   ├── dashboard
 │   │   └── page.jsx
-│   ├── buyer-login
-│   │   └── page.jsx
-│   ├── seller
-│   │   ├── documents
-│   │   │   └── page.jsx
-│   │   ├── products
-│   │   │   ├── add
-│   │   │   │   └── page.jsx
-│   │   │   └── page.jsx
-│   │   ├── layout.jsx
-│   │   └── page.jsx
-│   ├── seller-login
-│   │   └── page.jsx
+│   ├── sign-in
+│   │   └── [[...sign-in]]
+│   │       └── page.jsx
+│   ├── sign-up
+│   │   └── [[...sign-up]]
+│   │       └── page.jsx
 │   ├── favicon.ico
 │   ├── globals.css
 │   ├── layout.js
-│   ├── page.js
-│   └── Providers.jsx
+│   └── page.js
 ├── components
 │   ├── homepage
 │   │   ├── CategoriesMarquee.jsx
@@ -300,124 +229,22 @@ bethelia
 │   ├── brandOffers.js
 │   └── promoBanners.js
 ├── hooks
-│   ├── use-mobile.js
-│   ├── useCategories.js
-│   └── useProducts.js
+│   └── use-mobile.js
 ├── lib
-│   ├── firebase.js
+│   ├── syncUserToFirestore.js
 │   └── utils.js
-├── out
-│   ├── _next
-│   │   ├── static
-│   │   │   ├── chunks
-│   │   │   │   ├── app
-│   │   │   │   │   ├── _not-found
-│   │   │   │   │   │   └── page-c6c09561c2ad79db.js
-│   │   │   │   │   ├── buyer
-│   │   │   │   │   │   ├── layout-fda233b153904622.js
-│   │   │   │   │   │   └── page-4e3ffa0ed87091a0.js
-│   │   │   │   │   ├── buyer-login
-│   │   │   │   │   │   └── page-2b251247623a8d0c.js
-│   │   │   │   │   ├── seller
-│   │   │   │   │   │   ├── documents
-│   │   │   │   │   │   │   └── page-c352009f08026e7e.js
-│   │   │   │   │   │   ├── products
-│   │   │   │   │   │   │   ├── add
-│   │   │   │   │   │   │   │   └── page-8c4efc99d7c11661.js
-│   │   │   │   │   │   │   └── page-a5f32256c0cd1060.js
-│   │   │   │   │   │   ├── layout-4098822e0637ad49.js
-│   │   │   │   │   │   └── page-b22ff1c1548281f1.js
-│   │   │   │   │   ├── seller-login
-│   │   │   │   │   │   └── page-11513ce038cad8e2.js
-│   │   │   │   │   ├── layout-483f0d74f7b5e57b.js
-│   │   │   │   │   └── page-9faaf971a0e64dcd.js
-│   │   │   │   ├── pages
-│   │   │   │   │   ├── _app-92f2aae776f86b9c.js
-│   │   │   │   │   └── _error-71d2b6a7b832d02a.js
-│   │   │   │   ├── 314-4c5aaed8a1502bb1.js
-│   │   │   │   ├── 341.df3329d77a5faa19.js
-│   │   │   │   ├── 429-846f8ac5fe0ebd25.js
-│   │   │   │   ├── 472.a3826d29d6854395.js
-│   │   │   │   ├── 4bd1b696-1ef1e55301f827c6.js
-│   │   │   │   ├── 510-7f655ea1f682dd9f.js
-│   │   │   │   ├── 638-0547832a41adf540.js
-│   │   │   │   ├── 671-5f986947f3ef8144.js
-│   │   │   │   ├── 684-0fbae289a4d84a37.js
-│   │   │   │   ├── 71-cd3aa2de4e3fbb35.js
-│   │   │   │   ├── 848-d350b158dfecf553.js
-│   │   │   │   ├── 874-16b9129f1b50b443.js
-│   │   │   │   ├── ae6eea6a-15b112292a2836ce.js
-│   │   │   │   ├── bc9e92e6-4d0344b47b016caa.js
-│   │   │   │   ├── framework-f593a28cde54158e.js
-│   │   │   │   ├── main-app-33268b3037b033db.js
-│   │   │   │   ├── main-f8719266e809513a.js
-│   │   │   │   ├── polyfills-42372ed130431b0a.js
-│   │   │   │   └── webpack-bf492244bc188e53.js
-│   │   │   ├── css
-│   │   │   │   ├── b052219f8b83cbfd.css
-│   │   │   │   ├── ea7d800c8a680295.css
-│   │   │   │   └── f30152c0704fba31.css
-│   │   │   ├── media
-│   │   │   │   ├── 569ce4b8f30dc480-s.p.woff2
-│   │   │   │   ├── 747892c23ea88013-s.woff2
-│   │   │   │   ├── 8d697b304b401681-s.woff2
-│   │   │   │   ├── 93f479601ee12b01-s.p.woff2
-│   │   │   │   ├── 9610d9e46709d722-s.woff2
-│   │   │   │   └── ba015fad6dcf6784-s.woff2
-│   │   │   └── XPXrHk3R6WBoW36ogB7Fy
-│   │   │       ├── _buildManifest.js
-│   │   │       └── _ssgManifest.js
-│   │   └── XPXrHk3R6WBoW36ogB7Fy
-│   ├── seller
-│   │   ├── products
-│   │   │   ├── add.html
-│   │   │   └── add.txt
-│   │   ├── documents.html
-│   │   ├── documents.txt
-│   │   ├── products.html
-│   │   └── products.txt
-│   ├── 404.html
-│   ├── buyer-login.html
-│   ├── buyer-login.txt
-│   ├── buyer.html
-│   ├── buyer.txt
-│   ├── favicon.ico
-│   ├── file.svg
-│   ├── globe.svg
-│   ├── google6c3cfe3090b8e3e3.html
-│   ├── index.html
-│   ├── index.txt
-│   ├── next.svg
-│   ├── no-image.jpg
-│   ├── robots.txt
-│   ├── seller-login.html
-│   ├── seller-login.txt
-│   ├── seller.html
-│   ├── seller.txt
-│   ├── sitemap-0.xml
-│   ├── sitemap.xml
-│   ├── vercel.svg
-│   └── window.svg
 ├── public
 │   ├── file.svg
 │   ├── globe.svg
-│   ├── google6c3cfe3090b8e3e3.html
-│   ├── index.html
 │   ├── next.svg
-│   ├── no-image.jpg
-│   ├── robots.txt
-│   ├── sitemap-0.xml
-│   ├── sitemap.xml
 │   ├── vercel.svg
 │   └── window.svg
-├── store
-│   ├── authSlice.js
-│   └── store.js
+├── .env.local
 ├── .gitignore
 ├── components.json
 ├── eslint.config.mjs
 ├── jsconfig.json
-├── next-sitemap.config.js
+├── middleware.js
 ├── next.config.mjs
 ├── package-lock.json
 ├── package.json

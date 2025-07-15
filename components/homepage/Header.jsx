@@ -1,11 +1,10 @@
 "use client";
 import React from "react";
 import { Heart, ShoppingCart, Search } from "lucide-react";
-import { useSelector } from "react-redux";
 
 export default function Header() {
-  const wishCount = 2; // You may later fetch this from Redux or Firestore
-  const cartCount = 3;
+  const wishCount = 2; // Static fallback
+  const cartCount = 3; // Static fallback
 
   return (
     <header className='flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-white'>

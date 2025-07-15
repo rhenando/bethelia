@@ -39,26 +39,3 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-serviceAccountKey.json
-serviceAccountKey.json
-
-
-# next-sitemap output
-/sitemap.xml
-/sitemap-0.xml
-/robots.txt
-
-
-# Firebase
-.firebase/
-
-# Next.js
-.next/
-out/
-y/
-
-# Logs
-*.log
-
-# System files
-.DS_Store
