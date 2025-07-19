@@ -1,6 +1,9 @@
 # Project Structure
 
 bethelia
+├── .github
+│   └── workflows
+│       └── firebase-deploy.yml
 ├── .next
 │   ├── cache
 │   │   ├── swc
@@ -103,6 +106,9 @@ bethelia
 │   │   │       ├── 39.pack.gz
 │   │   │       ├── 4.pack.gz
 │   │   │       ├── 40.pack.gz
+│   │   │       ├── 41.pack.gz
+│   │   │       ├── 42.pack.gz
+│   │   │       ├── 43.pack.gz
 │   │   │       ├── 5.pack.gz
 │   │   │       ├── 6.pack.gz
 │   │   │       ├── 7.pack.gz
@@ -122,12 +128,16 @@ bethelia
 │   │   │   ├── buyer-signin
 │   │   │   │   ├── page_client-reference-manifest.js
 │   │   │   │   └── page.js
+│   │   │   ├── favicon.ico
+│   │   │   │   └── route.js
+│   │   │   ├── seller-dashboard
+│   │   │   │   ├── page_client-reference-manifest.js
+│   │   │   │   └── page.js
+│   │   │   ├── seller-signin
+│   │   │   │   ├── page_client-reference-manifest.js
+│   │   │   │   └── page.js
 │   │   │   ├── page_client-reference-manifest.js
 │   │   │   └── page.js
-│   │   ├── pages
-│   │   │   ├── _app.js
-│   │   │   ├── _document.js
-│   │   │   └── _error.js
 │   │   ├── vendor-chunks
 │   │   │   ├── @firebase.js
 │   │   │   ├── @grpc.js
@@ -164,7 +174,6 @@ bethelia
 │   │   │   ├── use-callback-ref.js
 │   │   │   ├── use-sidecar.js
 │   │   │   └── use-sync-external-store.js
-│   │   ├── _error.js
 │   │   ├── app-paths-manifest.json
 │   │   ├── interception-route-rewrite-manifest.js
 │   │   ├── middleware-build-manifest.js
@@ -186,32 +195,17 @@ bethelia
 │   │   │   │   │   └── page.js
 │   │   │   │   ├── buyer-signin
 │   │   │   │   │   └── page.js
+│   │   │   │   ├── seller-dashboard
+│   │   │   │   │   ├── layout.js
+│   │   │   │   │   └── page.js
+│   │   │   │   ├── seller-signin
+│   │   │   │   │   └── page.js
 │   │   │   │   ├── layout.js
 │   │   │   │   └── page.js
-│   │   │   ├── fallback
-│   │   │   │   ├── pages
-│   │   │   │   │   ├── _app.js
-│   │   │   │   │   └── _error.js
-│   │   │   │   ├── _app-pages-browser_node_modules_next_dist_client_dev_noop-turbopack-hmr_js.js
-│   │   │   │   ├── _pages-dir-browser_node_modules_next_dist_pages__app_js.js
-│   │   │   │   ├── _pages-dir-browser_node_modules_next_dist_pages__error_js.js
-│   │   │   │   ├── amp.js
-│   │   │   │   ├── main-app.js
-│   │   │   │   ├── main.js
-│   │   │   │   ├── react-refresh.js
-│   │   │   │   └── webpack.js
-│   │   │   ├── pages
-│   │   │   │   ├── _app.js
-│   │   │   │   └── _error.js
 │   │   │   ├── _app-pages-browser_node_modules_next_dist_client_dev_noop-turbopack-hmr_js.js
-│   │   │   ├── _error.js
-│   │   │   ├── _pages-dir-browser_node_modules_next_dist_pages__app_js.js
-│   │   │   ├── _pages-dir-browser_node_modules_next_dist_pages__error_js.js
 │   │   │   ├── app-pages-internals.js
 │   │   │   ├── main-app.js
-│   │   │   ├── main.js
 │   │   │   ├── polyfills.js
-│   │   │   ├── react-refresh.js
 │   │   │   └── webpack.js
 │   │   ├── css
 │   │   │   └── app
@@ -223,104 +217,70 @@ bethelia
 │   │   └── webpack
 │   │       ├── app
 │   │       │   ├── buyer-signin
-│   │       │   │   ├── page.6024f8271f5ddc3e.hot-update.js
-│   │       │   │   ├── page.68a667cbb1139eee.hot-update.js
-│   │       │   │   ├── page.786ef17daea524dd.hot-update.js
-│   │       │   │   └── page.c34ea846efe4f6dc.hot-update.js
-│   │       │   ├── layout.21809533f9ab3e7f.hot-update.js
-│   │       │   ├── layout.258397f814999d57.hot-update.js
-│   │       │   ├── layout.338614a48e00e488.hot-update.js
-│   │       │   ├── layout.46f5b2da66ec85c1.hot-update.js
-│   │       │   ├── layout.6024f8271f5ddc3e.hot-update.js
-│   │       │   ├── layout.60aa42c32f9df023.hot-update.js
-│   │       │   ├── layout.68a667cbb1139eee.hot-update.js
-│   │       │   ├── layout.6ca4028673ed4cba.hot-update.js
-│   │       │   ├── layout.710176540aad4dd7.hot-update.js
-│   │       │   ├── layout.73e73e977a22f6d3.hot-update.js
-│   │       │   ├── layout.786ef17daea524dd.hot-update.js
-│   │       │   ├── layout.7a593622ea13d761.hot-update.js
-│   │       │   ├── layout.7ebad99f213aaaee.hot-update.js
-│   │       │   ├── layout.881129941a206181.hot-update.js
-│   │       │   ├── layout.954a6ca21ef2240c.hot-update.js
-│   │       │   ├── layout.a6577e3c46c34d41.hot-update.js
-│   │       │   ├── layout.aac4a76e77aacc2a.hot-update.js
-│   │       │   ├── layout.ae29ee059b84f8ca.hot-update.js
-│   │       │   ├── layout.b05dada0c59e6702.hot-update.js
-│   │       │   ├── layout.b66b60e27458c4f2.hot-update.js
-│   │       │   ├── layout.b8b5bd59c657cc3f.hot-update.js
-│   │       │   ├── layout.bc09532fdc51f6f2.hot-update.js
-│   │       │   ├── layout.c34ea846efe4f6dc.hot-update.js
-│   │       │   ├── layout.d4c037fd7f0ffb0f.hot-update.js
-│   │       │   ├── layout.d74c4b2cbb6bdf76.hot-update.js
-│   │       │   ├── layout.d8596043769ae024.hot-update.js
-│   │       │   ├── layout.f399f54cc8d22136.hot-update.js
-│   │       │   ├── layout.f406b51662f40a28.hot-update.js
-│   │       │   ├── layout.f93e7f41c605a17f.hot-update.js
-│   │       │   ├── layout.f965b5696f6ff802.hot-update.js
-│   │       │   └── page.aac4a76e77aacc2a.hot-update.js
-│   │       ├── 21809533f9ab3e7f.webpack.hot-update.json
-│   │       ├── 258397f814999d57.webpack.hot-update.json
-│   │       ├── 338614a48e00e488.webpack.hot-update.json
-│   │       ├── 46f5b2da66ec85c1.webpack.hot-update.json
-│   │       ├── 6024f8271f5ddc3e.webpack.hot-update.json
-│   │       ├── 60aa42c32f9df023.webpack.hot-update.json
+│   │       │   │   ├── page.6a95ee563aecc824.hot-update.js
+│   │       │   │   ├── page.77904ee45d053ee7.hot-update.js
+│   │       │   │   └── page.b63f6a4ae77edcb1.hot-update.js
+│   │       │   ├── seller-dashboard
+│   │       │   │   ├── layout.033c591793366e98.hot-update.js
+│   │       │   │   ├── layout.62fe99e134ecd272.hot-update.js
+│   │       │   │   └── layout.d1e983dc755e1c03.hot-update.js
+│   │       │   ├── seller-signin
+│   │       │   │   └── page.9cecb3f7ca23ca8c.hot-update.js
+│   │       │   ├── layout.033c591793366e98.hot-update.js
+│   │       │   ├── layout.2b29ae95c009e53e.hot-update.js
+│   │       │   ├── layout.62fe99e134ecd272.hot-update.js
+│   │       │   ├── layout.6a95ee563aecc824.hot-update.js
+│   │       │   ├── layout.70baff01f7aef801.hot-update.js
+│   │       │   ├── layout.77904ee45d053ee7.hot-update.js
+│   │       │   ├── layout.9cecb3f7ca23ca8c.hot-update.js
+│   │       │   ├── layout.a2c851a8811f0c29.hot-update.js
+│   │       │   ├── layout.b63f6a4ae77edcb1.hot-update.js
+│   │       │   ├── layout.b8c6d3035293803a.hot-update.js
+│   │       │   ├── layout.d1e983dc755e1c03.hot-update.js
+│   │       │   ├── page.033c591793366e98.hot-update.js
+│   │       │   ├── page.2b29ae95c009e53e.hot-update.js
+│   │       │   ├── page.62fe99e134ecd272.hot-update.js
+│   │       │   ├── page.70baff01f7aef801.hot-update.js
+│   │       │   └── page.d1e983dc755e1c03.hot-update.js
+│   │       ├── 033c591793366e98.webpack.hot-update.json
+│   │       ├── 2b29ae95c009e53e.webpack.hot-update.json
+│   │       ├── 4c8f9c163ea68f95.webpack.hot-update.json
+│   │       ├── 53f2be7bf5716f13.webpack.hot-update.json
+│   │       ├── 62fe99e134ecd272.webpack.hot-update.json
 │   │       ├── 633457081244afec._.hot-update.json
-│   │       ├── 68a667cbb1139eee.webpack.hot-update.json
-│   │       ├── 6ca4028673ed4cba.webpack.hot-update.json
-│   │       ├── 710176540aad4dd7.webpack.hot-update.json
-│   │       ├── 73e73e977a22f6d3.webpack.hot-update.json
-│   │       ├── 786ef17daea524dd.webpack.hot-update.json
-│   │       ├── 7a593622ea13d761.webpack.hot-update.json
-│   │       ├── 7ebad99f213aaaee.webpack.hot-update.json
-│   │       ├── 881129941a206181.webpack.hot-update.json
-│   │       ├── 954a6ca21ef2240c.webpack.hot-update.json
-│   │       ├── 9863a40e22a6eef3.webpack.hot-update.json
-│   │       ├── a6577e3c46c34d41.webpack.hot-update.json
-│   │       ├── aac4a76e77aacc2a.webpack.hot-update.json
-│   │       ├── ae29ee059b84f8ca.webpack.hot-update.json
-│   │       ├── b05dada0c59e6702.webpack.hot-update.json
-│   │       ├── b66b60e27458c4f2.webpack.hot-update.json
-│   │       ├── b8b5bd59c657cc3f.webpack.hot-update.json
-│   │       ├── bc09532fdc51f6f2.webpack.hot-update.json
-│   │       ├── c34ea846efe4f6dc.webpack.hot-update.json
-│   │       ├── d4c037fd7f0ffb0f.webpack.hot-update.json
-│   │       ├── d74c4b2cbb6bdf76.webpack.hot-update.json
-│   │       ├── d8596043769ae024.webpack.hot-update.json
-│   │       ├── f399f54cc8d22136.webpack.hot-update.json
-│   │       ├── f406b51662f40a28.webpack.hot-update.json
-│   │       ├── f93e7f41c605a17f.webpack.hot-update.json
-│   │       ├── f965b5696f6ff802.webpack.hot-update.json
-│   │       ├── webpack.21809533f9ab3e7f.hot-update.js
-│   │       ├── webpack.258397f814999d57.hot-update.js
-│   │       ├── webpack.338614a48e00e488.hot-update.js
-│   │       ├── webpack.46f5b2da66ec85c1.hot-update.js
-│   │       ├── webpack.6024f8271f5ddc3e.hot-update.js
-│   │       ├── webpack.60aa42c32f9df023.hot-update.js
-│   │       ├── webpack.68a667cbb1139eee.hot-update.js
-│   │       ├── webpack.6ca4028673ed4cba.hot-update.js
-│   │       ├── webpack.710176540aad4dd7.hot-update.js
-│   │       ├── webpack.73e73e977a22f6d3.hot-update.js
-│   │       ├── webpack.786ef17daea524dd.hot-update.js
-│   │       ├── webpack.7a593622ea13d761.hot-update.js
-│   │       ├── webpack.7ebad99f213aaaee.hot-update.js
-│   │       ├── webpack.881129941a206181.hot-update.js
-│   │       ├── webpack.954a6ca21ef2240c.hot-update.js
-│   │       ├── webpack.9863a40e22a6eef3.hot-update.js
-│   │       ├── webpack.a6577e3c46c34d41.hot-update.js
-│   │       ├── webpack.aac4a76e77aacc2a.hot-update.js
-│   │       ├── webpack.ae29ee059b84f8ca.hot-update.js
-│   │       ├── webpack.b05dada0c59e6702.hot-update.js
-│   │       ├── webpack.b66b60e27458c4f2.hot-update.js
-│   │       ├── webpack.b8b5bd59c657cc3f.hot-update.js
-│   │       ├── webpack.bc09532fdc51f6f2.hot-update.js
-│   │       ├── webpack.c34ea846efe4f6dc.hot-update.js
-│   │       ├── webpack.d4c037fd7f0ffb0f.hot-update.js
-│   │       ├── webpack.d74c4b2cbb6bdf76.hot-update.js
-│   │       ├── webpack.d8596043769ae024.hot-update.js
-│   │       ├── webpack.f399f54cc8d22136.hot-update.js
-│   │       ├── webpack.f406b51662f40a28.hot-update.js
-│   │       ├── webpack.f93e7f41c605a17f.hot-update.js
-│   │       └── webpack.f965b5696f6ff802.hot-update.js
+│   │       ├── 6a95ee563aecc824.webpack.hot-update.json
+│   │       ├── 6acb94b6d4a2f8fa.webpack.hot-update.json
+│   │       ├── 70baff01f7aef801.webpack.hot-update.json
+│   │       ├── 77904ee45d053ee7.webpack.hot-update.json
+│   │       ├── 79f0fc311cbf864b.webpack.hot-update.json
+│   │       ├── 9cecb3f7ca23ca8c.webpack.hot-update.json
+│   │       ├── 9d7633bfe2ffe6f4.webpack.hot-update.json
+│   │       ├── a2c851a8811f0c29.webpack.hot-update.json
+│   │       ├── a3871bd52d092a87.webpack.hot-update.json
+│   │       ├── b63f6a4ae77edcb1.webpack.hot-update.json
+│   │       ├── b8c6d3035293803a.webpack.hot-update.json
+│   │       ├── c7a414b6fa248085.webpack.hot-update.json
+│   │       ├── d1e983dc755e1c03.webpack.hot-update.json
+│   │       ├── d28b2ea81015fef2.webpack.hot-update.json
+│   │       ├── webpack.033c591793366e98.hot-update.js
+│   │       ├── webpack.2b29ae95c009e53e.hot-update.js
+│   │       ├── webpack.4c8f9c163ea68f95.hot-update.js
+│   │       ├── webpack.53f2be7bf5716f13.hot-update.js
+│   │       ├── webpack.62fe99e134ecd272.hot-update.js
+│   │       ├── webpack.6a95ee563aecc824.hot-update.js
+│   │       ├── webpack.6acb94b6d4a2f8fa.hot-update.js
+│   │       ├── webpack.70baff01f7aef801.hot-update.js
+│   │       ├── webpack.77904ee45d053ee7.hot-update.js
+│   │       ├── webpack.79f0fc311cbf864b.hot-update.js
+│   │       ├── webpack.9cecb3f7ca23ca8c.hot-update.js
+│   │       ├── webpack.9d7633bfe2ffe6f4.hot-update.js
+│   │       ├── webpack.a2c851a8811f0c29.hot-update.js
+│   │       ├── webpack.a3871bd52d092a87.hot-update.js
+│   │       ├── webpack.b63f6a4ae77edcb1.hot-update.js
+│   │       ├── webpack.b8c6d3035293803a.hot-update.js
+│   │       ├── webpack.c7a414b6fa248085.hot-update.js
+│   │       ├── webpack.d1e983dc755e1c03.hot-update.js
+│   │       └── webpack.d28b2ea81015fef2.hot-update.js
 │   ├── types
 │   │   ├── app
 │   │   │   ├── buyer-dashboard
@@ -328,13 +288,17 @@ bethelia
 │   │   │   │   └── page.ts
 │   │   │   ├── buyer-signin
 │   │   │   │   └── page.ts
+│   │   │   ├── seller-dashboard
+│   │   │   │   ├── layout.ts
+│   │   │   │   └── page.ts
+│   │   │   ├── seller-signin
+│   │   │   │   └── page.ts
 │   │   │   ├── layout.ts
 │   │   │   └── page.ts
 │   │   ├── cache-life.d.ts
 │   │   └── package.json
 │   ├── app-build-manifest.json
 │   ├── build-manifest.json
-│   ├── fallback-build-manifest.json
 │   ├── package.json
 │   ├── react-loadable-manifest.json
 │   └── trace
@@ -427,6 +391,7 @@ bethelia
 ├── public
 │   ├── file.svg
 │   ├── globe.svg
+│   ├── index.html
 │   ├── next.svg
 │   ├── vercel.svg
 │   └── window.svg
@@ -437,9 +402,11 @@ bethelia
 │   │   └── authThunks.js
 │   └── store.js
 ├── .env.local
+├── .firebaserc
 ├── .gitignore
 ├── components.json
 ├── eslint.config.mjs
+├── firebase.json
 ├── jsconfig.json
 ├── next.config.mjs
 ├── package-lock.json
