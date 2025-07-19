@@ -45,16 +45,15 @@ export default function BuyerAuthPage() {
   const isBuyer = useSelector(selectIsBuyer);
 
   useEffect(() => {
+    // Also updated this to redirect an already logged-in user to the homepage
     if (isAuthenticated && isBuyer) {
-      router.push("/buyer-dashboard");
+      router.push("/");
     }
   }, [isAuthenticated, isBuyer, router]);
 
   const handleAuthSuccess = async (user) => {
     try {
-      // Set the preferred role for this session
       sessionStorage.setItem("preferredRole", "buyer");
-
       const { data: buyerData, isNew } = await getOrCreateBuyer(user);
       dispatch(buyerLoginSuccess(buyerData));
 
@@ -64,7 +63,8 @@ export default function BuyerAuthPage() {
           : `Welcome back, ${user.email || user.phoneNumber}!`
       );
 
-      router.push("/buyer-dashboard");
+      // UPDATED: Redirect to homepage ("/") after successful login
+      router.push("/");
     } catch (error) {
       dispatch(loginFailure(error.message));
       toast.error(error.message);
