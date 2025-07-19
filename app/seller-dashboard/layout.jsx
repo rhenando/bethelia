@@ -28,7 +28,7 @@ const tabs = [
   },
   {
     label: "Products",
-    href: "/seller/products",
+    href: "/seller-dashboard/products",
     icon: <Package className='w-5 h-5' />,
   },
   {
