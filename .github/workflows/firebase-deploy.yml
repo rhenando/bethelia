@@ -33,5 +33,6 @@ jobs:
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_TOKEN }}"
-          channelId: live # Deploy to the 'live' channel
+          channelId: live
           projectId: bethelia
+          entryPoint: ./frontend
