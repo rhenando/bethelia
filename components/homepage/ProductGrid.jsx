@@ -10,17 +10,19 @@ export default function ProductGrid({ products = [], loading = false }) {
     return Array.from({ length: 6 }).map((_, idx) => (
       <div
         key={`skeleton-${idx}`} // Unique key for each skeleton
-        className='relative bg-white rounded-xl shadow p-2 flex flex-col items-center'
+        className='relative bg-white rounded-xl shadow p-2 flex flex-col items-start' // Ensures content is left-aligned
       >
         {/* Skeleton for the favorite heart icon */}
         <Skeleton className='absolute top-2 right-2 h-6 w-6 rounded-full' />
-
-        {/* Skeleton for the product image */}
-        <Skeleton className='h-28 w-28 rounded-md mb-2' />
-
+        {/* Skeleton for the product image - now w-full */}
+        <Skeleton className='w-full h-28 rounded-md mb-2 object-cover' />{" "}
+        {/* Changed w-28 to w-full */}
         {/* Skeletons for product name and price */}
-        <Skeleton className='h-4 w-24 mb-1' />
-        <Skeleton className='h-5 w-16' />
+        <Skeleton className='h-4 w-full mb-1' />
+        <Skeleton className='h-5 w-1/2' />
+        {/* Skeletons for "On Sale" and "Sold" */}
+        <Skeleton className='h-3 w-1/3 mt-1' />
+        <Skeleton className='h-3 w-1/4 mt-1' />
       </div>
     ));
   };
@@ -67,7 +69,7 @@ export default function ProductGrid({ products = [], loading = false }) {
         {products.map((product) => (
           <div
             key={product.id} // Use product ID as the key for efficient rendering
-            className='relative bg-white rounded-xl shadow p-2 flex flex-col items-center'
+            className='relative bg-white rounded-xl shadow p-2 flex flex-col items-start'
           >
             {/* Favorite button (placeholder functionality) */}
             <button
@@ -78,7 +80,7 @@ export default function ProductGrid({ products = [], loading = false }) {
               <Heart className='w-5 h-5 text-gray-300 hover:text-red-500' />
             </button>
 
-            {/* Product image */}
+            {/* Product image - now w-full */}
             <img
               src={
                 // Prioritize mainImage, then first image in images array, fallback to placeholder
@@ -87,20 +89,37 @@ export default function ProductGrid({ products = [], loading = false }) {
                 "/placeholder-product.png"
               }
               alt={product.name || "Product"} // Alt text for accessibility
-              className='h-28 w-28 object-cover rounded-md mb-2'
+              className='w-full h-28 object-cover rounded-md mb-2' // Changed w-28 to w-full
               // Fallback for broken image links
               onError={(e) => (e.target.src = "/placeholder-product.png")}
             />
 
-            {/* Product name */}
-            <div className='font-semibold text-center text-base'>
-              {product.name || "Unnamed"}
+            {/* Product name - font size adjusted for length */}
+            <div className='font-semibold w-full leading-tight'>
+              <span
+                className={
+                  product.name && product.name.length > 25
+                    ? "text-xs"
+                    : "text-sm"
+                }
+              >
+                {product.name || "Unnamed"}
+              </span>
             </div>
 
             {/* Product price */}
             <div className='text-green-700 font-bold text-lg mt-1'>
-              ₱{product.price ?? "N/A"}{" "}
-              {/* Display price or "N/A" if null/undefined */}
+              ₱{product.price ?? "N/A"}
+            </div>
+
+            {/* "On Sale" and "Sold" indicators - stacked and left-aligned */}
+            <div className='flex flex-col items-start text-xs mt-1'>
+              <span className='text-primary  py-0.5  font-bold mb-0.5'>
+                Sale | ₱20 off
+              </span>
+              <span className='text-gray-500'>
+                Sold: <span className='font-semibold'>50+</span>
+              </span>
             </div>
           </div>
         ))}
