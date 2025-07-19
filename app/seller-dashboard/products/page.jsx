@@ -1,5 +1,4 @@
 // /app/seller-dashboard/products/page.jsx
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -28,7 +27,21 @@ export default function SellerProductsPage() {
   useEffect(() => {
     // Fetch products only when the user object is available
     if (user && user.uid) {
+      // ✅ TEMPORARY LOG: Log the user's UID here
+      console.log("SellerProductsPage: Current User UID:", user.uid);
+
       const fetchProducts = async () => {
+        console.log(
+          "SellerProductsPage: Starting fetchProducts for user:",
+          user.uid
+        );
+        if (!db) {
+          console.error("SellerProductsPage: Firestore DB is not initialized!");
+          toast.error("Firebase connection error.");
+          setLoading(false);
+          return;
+        }
+
         try {
           const productsRef = collection(db, "products");
           // Query to get only the products belonging to the current seller, ordered by creation date
@@ -39,22 +52,29 @@ export default function SellerProductsPage() {
           );
 
           const querySnapshot = await getDocs(q);
+          console.log(
+            "SellerProductsPage: Fetched products snapshot. Docs found:",
+            querySnapshot.docs.length
+          );
           const fetchedProducts = querySnapshot.docs.map((doc) => ({
             id: doc.id,
             ...doc.data(),
           }));
           setProducts(fetchedProducts);
+          console.log("SellerProductsPage: Mapped products:", fetchedProducts);
         } catch (error) {
-          console.error("Error fetching products:", error);
+          console.error("SellerProductsPage: Error fetching products:", error);
           toast.error("Failed to load products.");
         } finally {
           setLoading(false);
+          console.log("SellerProductsPage: Loading state set to false.");
         }
       };
 
       fetchProducts();
     } else if (!user) {
       // If there's no user after the auth check, stop loading
+      console.log("SellerProductsPage: No user found, stopping loading.");
       setLoading(false);
     }
   }, [user]);
@@ -65,17 +85,35 @@ export default function SellerProductsPage() {
   };
 
   const handleDeleteProduct = async (product) => {
+    console.log(
+      `SellerProductsPage: Attempting to delete product: ${product.id}`
+    );
+    if (!db) {
+      console.error(
+        "SellerProductsPage: Firestore DB is not initialized for delete!"
+      );
+      toast.error("Firebase connection error. Cannot delete.");
+      return;
+    }
+
     try {
       // Delete the document from Firestore
       await deleteDoc(doc(db, "products", product.id));
+      console.log(
+        `SellerProductsPage: Product ${product.id} deleted from Firestore.`
+      );
+
       // Update the local state to remove the product from the UI instantly
       setProducts((prevProducts) =>
         prevProducts.filter((p) => p.id !== product.id)
       );
-      // The success toast is already handled inside the SellerProducts component
+      toast.success(
+        `Product "${product.name || product.id}" deleted successfully!`
+      );
+      console.log("SellerProductsPage: Local state updated after deletion.");
     } catch (error) {
-      console.error("Error deleting product:", error);
-      toast.error("Failed to delete product.");
+      console.error("SellerProductsPage: Error deleting product:", error);
+      toast.error(`Failed to delete product "${product.name || product.id}".`);
     }
   };
 
@@ -89,9 +127,6 @@ export default function SellerProductsPage() {
 
   return (
     <div>
-      {/* This is where your component is used.
-        This parent page handles all the logic and passes the results down.
-      */}
       <SellerProducts
         products={products}
         onEditProduct={handleEditProduct}

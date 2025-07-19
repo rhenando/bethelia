@@ -1,5 +1,6 @@
 // /components/ProductGrid.jsx
 import React from "react";
+import Link from "next/link"; // ✅ Import Link from Next.js for client-side navigation
 import { Heart } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton"; // ✅ Adjust this path if your Skeleton component is located elsewhere
 
@@ -15,8 +16,7 @@ export default function ProductGrid({ products = [], loading = false }) {
         {/* Skeleton for the favorite heart icon */}
         <Skeleton className='absolute top-2 right-2 h-6 w-6 rounded-full' />
         {/* Skeleton for the product image - now w-full */}
-        <Skeleton className='w-full h-28 rounded-md mb-2 object-cover' />{" "}
-        {/* Changed w-28 to w-full */}
+        <Skeleton className='w-full h-28 rounded-md mb-2 object-cover' />
         {/* Skeletons for product name and price */}
         <Skeleton className='h-4 w-full mb-1' />
         <Skeleton className='h-5 w-1/2' />
@@ -67,15 +67,24 @@ export default function ProductGrid({ products = [], loading = false }) {
 
       <div className='grid grid-cols-2 gap-4 px-4 mt-2'>
         {products.map((product) => (
-          <div
+          // ✅ Wrap the entire product card with a Next.js Link component
+          <Link
             key={product.id} // Use product ID as the key for efficient rendering
-            className='relative bg-white rounded-xl shadow p-2 flex flex-col items-start'
+            href={`/product/${product.id}`} // Dynamic link to product details page
+            passHref // Pass href to the underlying <a> tag
+            className='relative bg-white rounded-xl shadow p-2 flex flex-col items-start cursor-pointer hover:shadow-lg transition-shadow duration-200' // Added cursor-pointer and hover effects
           >
             {/* Favorite button (placeholder functionality) */}
             <button
               className='absolute top-2 right-2 bg-white/90 rounded-full p-1 z-10'
               tabIndex={-1} // Makes it not focusable via tab key
               aria-label='Add to favorites'
+              onClick={(e) => {
+                e.preventDefault(); // Prevent default link behavior
+                e.stopPropagation(); // Stop event from bubbling up to the Link (card click)
+                // Add your favorite logic here
+                console.log(`Toggled favorite for product: ${product.name}`);
+              }}
             >
               <Heart className='w-5 h-5 text-gray-300 hover:text-red-500' />
             </button>
@@ -89,7 +98,7 @@ export default function ProductGrid({ products = [], loading = false }) {
                 "/placeholder-product.png"
               }
               alt={product.name || "Product"} // Alt text for accessibility
-              className='w-full h-28 object-cover rounded-md mb-2' // Changed w-28 to w-full
+              className='w-full h-28 object-cover rounded-md mb-2'
               // Fallback for broken image links
               onError={(e) => (e.target.src = "/placeholder-product.png")}
             />
@@ -114,14 +123,14 @@ export default function ProductGrid({ products = [], loading = false }) {
 
             {/* "On Sale" and "Sold" indicators - stacked and left-aligned */}
             <div className='flex flex-col items-start text-xs mt-1'>
-              <span className='text-primary  py-0.5  font-bold mb-0.5'>
+              <span className='text-primary py-0.5 font-bold mb-0.5'>
                 Sale | ₱20 off
               </span>
               <span className='text-gray-500'>
                 Sold: <span className='font-semibold'>50+</span>
               </span>
             </div>
-          </div>
+          </Link> // ✅ Close Link component
         ))}
       </div>
     </>
