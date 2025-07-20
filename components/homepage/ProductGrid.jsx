@@ -62,9 +62,11 @@ export default function ProductGrid({
         key={product.id}
         href={`/product/${product.id}`}
         passHref
-        className={`bg-white rounded-xl shadow p-2 cursor-pointer hover:shadow-lg transition-shadow duration-200 ${
+        // --- THIS IS THE FIX ---
+        // The 'relative' class is added here to contain the absolute positioned heart icon.
+        className={`relative bg-white rounded-xl shadow p-2 cursor-pointer hover:shadow-lg transition-shadow duration-200 ${
           viewMode === "grid"
-            ? "relative flex flex-col items-start"
+            ? "flex flex-col items-start"
             : "flex flex-row items-center gap-4"
         }`}
       >
@@ -79,6 +81,7 @@ export default function ProductGrid({
         >
           <Heart className='w-5 h-5 text-gray-300 hover:text-red-500' />
         </button>
+
         <img
           src={
             product.mainImage ||
@@ -91,6 +94,7 @@ export default function ProductGrid({
           }`}
           onError={(e) => (e.target.src = "/placeholder-product.png")}
         />
+
         <div className='flex-1 flex flex-col items-start'>
           <div className='font-semibold w-full leading-tight'>
             <span
