@@ -1,0 +1,12 @@
+services:
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      # This syncs your code
+      - .:/app
+      # This tells Docker to create a separate volume for node_modules
+      # and prevents the Windows folder from being synced over.
+      - /app/node_modules
+    command: npm run dev
