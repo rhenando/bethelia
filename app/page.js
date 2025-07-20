@@ -62,7 +62,7 @@ export default function HomePage() {
   }, []); // Empty dependency array means this runs once on mount
 
   return (
-    <div className='max-w-md mx-auto bg-white min-h-screen relative'>
+    <div className='max-w-md mx-auto bg-white min-h-screen relative mb-4'>
       <Header />
       <PromoBannerCarousel banners={promoBanners} />
       <SellBanner />
