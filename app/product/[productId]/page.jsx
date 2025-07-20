@@ -182,7 +182,7 @@ export default function ProductDetailsPage() {
         <div className='p-4 pb-24'>
           <button
             onClick={() => router.back()}
-            className='flex items-center gap-1 text-sm text-gray-600 mb-4'
+            className='flex items-center gap-1 text-lg font-bold text-red-500 mb-4'
           >
             <ChevronLeft className='w-4 h-4' /> Back
           </button>
