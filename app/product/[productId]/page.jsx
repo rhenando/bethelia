@@ -13,6 +13,9 @@ import {
   Truck,
   Clock,
   Star,
+  ShieldCheck, // <-- New Icon
+  PackageCheck, // <-- New Icon
+  Undo2, // <-- New Icon
 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import Header from "@/components/Header";
@@ -166,6 +169,12 @@ export default function ProductDetailsPage() {
   const displayStock = selectedVariant ? selectedVariant.stock : product.stock;
   const images = product.images || [];
 
+  const trustBadges = [
+    { icon: ShieldCheck, text: "Secure Payment" },
+    { icon: PackageCheck, text: "Authentic Product" },
+    { icon: Undo2, text: "Easy Returns" },
+  ];
+
   return (
     <>
       <Header />
@@ -173,7 +182,7 @@ export default function ProductDetailsPage() {
         <div className='p-4 pb-24'>
           <button
             onClick={() => router.back()}
-            className='flex items-center gap-1 text-md font-bold text-red-500 mb-4'
+            className='flex items-center gap-1 text-sm text-gray-600 mb-4'
           >
             <ChevronLeft className='w-4 h-4' /> Back
           </button>
@@ -261,9 +270,25 @@ export default function ProductDetailsPage() {
               <span className='font-semibold text-red-600'>{timeLeft}</span>
             </span>
           </div>
+
+          {/* --- ADDED: Trust Badges Section --- */}
+          <div className='my-6 border-t border-b py-3 flex justify-around items-start text-center'>
+            {trustBadges.map((badge, index) => (
+              <div
+                key={index}
+                className='flex flex-col items-center text-gray-600 w-1/3'
+              >
+                <badge.icon className='w-6 h-6 mb-1 text-gray-500' />
+                <span className='text-xs font-medium'>{badge.text}</span>
+              </div>
+            ))}
+          </div>
+
           {product.variants && product.variants.length > 0 && (
             <div className='mb-4'>
-              <h2 className='text-sm font-semibold mb-2'>Available Variants</h2>
+              <h2 className='text-sm font-semibold mb-2'>
+                Available Variations
+              </h2>
               <div className='flex flex-wrap gap-2'>
                 {product.variants.map((variant, idx) => (
                   <button
@@ -283,7 +308,6 @@ export default function ProductDetailsPage() {
             </div>
           )}
           <Tabs defaultValue='description' className='w-full mb-6'>
-            {/* --- UPDATED: 4 columns with smaller text --- */}
             <TabsList className='grid w-full grid-cols-4 h-auto'>
               <TabsTrigger value='description' className='text-xs px-1'>
                 Description
