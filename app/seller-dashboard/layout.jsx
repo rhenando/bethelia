@@ -23,7 +23,7 @@ const tabs = [
   },
   {
     label: "Documents",
-    href: "/seller/documents",
+    href: "/seller-dashboard/documents",
     icon: <FileText className='w-5 h-5' />,
   },
   {
