@@ -1,6 +1,6 @@
 import "./globals.css";
 import ClientProviders from "./ClientProviders";
-import NavbarMobile from "@/components/NavbarMobile";
+
 import LayoutShell from "@/components/LayoutShell";
 
 export const metadata = {
@@ -44,7 +44,6 @@ export default function RootLayout({ children }) {
           <div className='flex justify-center min-h-screen bg-gray-100'>
             <div className='w-full max-w-[430px] min-h-screen bg-white flex flex-col shadow-xl relative pt-safe-top pb-safe-bottom'>
               <LayoutShell>{children}</LayoutShell>
-              <NavbarMobile />
             </div>
           </div>
         </ClientProviders>

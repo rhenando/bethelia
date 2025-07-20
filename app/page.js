@@ -5,9 +5,8 @@ import React, { useEffect, useState } from "react";
 import { collection, query, getDocs, orderBy } from "firebase/firestore";
 import { db } from "@/lib/firebase"; // Make sure this path is correct
 import { toast } from "sonner"; // For notifications
-import { Loader2 } from "lucide-react"; // For loading spinner
 
-import Header from "@/components/homepage/Header";
+import Header from "@/components/Header";
 import PromoBannerCarousel from "@/components/homepage/PromoBannerCarousel";
 import CategoriesMarquee from "@/components/homepage/CategoriesMarquee";
 import ProductGrid from "@/components/homepage/ProductGrid"; // This is your presentational grid

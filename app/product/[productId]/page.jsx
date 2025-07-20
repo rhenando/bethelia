@@ -1,192 +1,405 @@
-// app/product/[productId]/page.jsx
-"use client"; // This component needs to be a client component to use hooks
+"use client";
 
 import React, { useEffect, useState } from "react";
-import { doc, getDoc } from "firebase/firestore"; // Import Firestore functions for single document fetch
-import { db } from "@/lib/firebase"; // Make sure this path is correct for your Firebase instance
-import { toast } from "sonner"; // For user notifications
-import { Loader2 } from "lucide-react"; // For loading spinner icon
-import { useParams } from "next/navigation"; // ✅ Import useParams for App Router
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import { toast } from "sonner";
+import {
+  ShoppingCart,
+  Store,
+  Minus,
+  Plus,
+  ChevronLeft,
+  Truck,
+  Clock,
+  Star,
+} from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
+import Header from "@/components/Header";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+} from "@/components/ui/carousel";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+// --- Helper functions ---
+function formatPrice(amount) {
+  return (
+    "₱" + Number(amount).toLocaleString(undefined, { minimumFractionDigits: 2 })
+  );
+}
+function getDeliveryDate() {
+  const date = new Date();
+  date.setDate(date.getDate() + 3);
+  return date.toLocaleDateString("en-US", { month: "long", day: "numeric" });
+}
+
+// --- Main Component ---
 export default function ProductDetailsPage() {
-  // useParams hook to get dynamic route segments (e.g., productId)
   const params = useParams();
-  const productId = params.productId; // Get the productId from the URL
+  const router = useRouter();
+  const productId = params.productId;
 
   const [product, setProduct] = useState(null);
+  const [seller, setSeller] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [selectedVariant, setSelectedVariant] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+  const [carouselApi, setCarouselApi] = useState(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [slideCount, setSlideCount] = useState(0);
+  const [timeLeft, setTimeLeft] = useState("");
 
+  // --- Countdown Effect ---
   useEffect(() => {
-    const fetchProductDetails = async () => {
-      if (!productId) {
-        setLoading(false);
-        setError("Product ID is missing.");
-        return;
-      }
-
-      console.log(
-        `ProductDetailsPage: Attempting to fetch product with ID: ${productId}`
-      );
-      if (!db) {
-        console.error(
-          "ProductDetailsPage: Firestore DB is not initialized! Check '@/lib/firebase'."
+    const calculateTimeLeft = () => {
+      const now = new Date();
+      const endTime = new Date(now.getTime() + 36 * 60 * 60 * 1000);
+      const interval = setInterval(() => {
+        const current = new Date();
+        const difference = endTime - current;
+        if (difference <= 0) {
+          clearInterval(interval);
+          setTimeLeft("Order window closed");
+          return;
+        }
+        const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((difference / 1000 / 60) % 60);
+        const seconds = Math.floor((difference / 1000) % 60);
+        setTimeLeft(
+          `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
+            2,
+            "0"
+          )}:${String(seconds).padStart(2, "0")}`
         );
-        toast.error("Firebase connection error.");
-        setLoading(false);
-        return;
-      }
+      }, 1000);
+      return () => clearInterval(interval);
+    };
+    const cleanup = calculateTimeLeft();
+    return cleanup;
+  }, []);
 
+  // --- Data Fetching Effect ---
+  useEffect(() => {
+    if (!productId) {
+      setLoading(false);
+      return;
+    }
+    const fetchProductAndSeller = async () => {
       try {
-        const productRef = doc(db, "products", productId); // Create a reference to the specific product document
-        const productSnap = await getDoc(productRef); // Fetch the document snapshot
-
+        const productRef = doc(db, "products", productId);
+        const productSnap = await getDoc(productRef);
         if (productSnap.exists()) {
-          // If the document exists, set the product data
-          const fetchedProduct = { id: productSnap.id, ...productSnap.data() };
-          setProduct(fetchedProduct);
-          console.log(
-            "ProductDetailsPage: Fetched product data:",
-            fetchedProduct
-          );
+          const productData = { id: productSnap.id, ...productSnap.data() };
+          setProduct(productData);
+          if (productData.variants && productData.variants.length > 0) {
+            setSelectedVariant(productData.variants[0]);
+          }
+          if (productData.sellerId) {
+            const sellerRef = doc(db, "sellers", productData.sellerId);
+            const sellerSnap = await getDoc(sellerRef);
+            if (sellerSnap.exists()) {
+              setSeller(sellerSnap.data());
+            }
+          }
         } else {
-          // Document does not exist
-          console.log(
-            `ProductDetailsPage: No such product found with ID: ${productId}`
-          );
-          setError("Product not found.");
           toast.error("Product not found.");
         }
       } catch (err) {
-        // Handle any errors during fetching
-        console.error(
-          "ProductDetailsPage: Error fetching product details:",
-          err
-        );
-        setError("Failed to load product details.");
         toast.error("Failed to load product details.");
+        console.error("Error fetching product:", err);
       } finally {
-        setLoading(false); // Always set loading to false when done
+        setLoading(false);
       }
     };
+    fetchProductAndSeller();
+  }, [productId]);
 
-    fetchProductDetails();
-  }, [productId]); // Re-run effect if productId changes
+  // --- Carousel Listener Effect ---
+  useEffect(() => {
+    if (!carouselApi) return;
+    setSlideCount(carouselApi.scrollSnapList().length);
+    setCurrentSlide(carouselApi.selectedScrollSnap());
+    const onSelect = () => setCurrentSlide(carouselApi.selectedScrollSnap());
+    carouselApi.on("select", onSelect);
+    return () => carouselApi.off("select", onSelect);
+  }, [carouselApi]);
 
-  // --- Render Logic ---
+  const handleAddToCart = () => {
+    if (!product) return;
+    toast.info(`"Add to Cart" functionality is not implemented yet.`);
+  };
+
+  const handleVariantSelect = (variant) => {
+    setSelectedVariant(variant);
+    if (variant.image && product.images) {
+      const imageIndex = product.images.findIndex(
+        (img) => img === variant.image
+      );
+      if (imageIndex !== -1 && carouselApi) {
+        carouselApi.scrollTo(imageIndex);
+      }
+    }
+  };
+
+  const handleQuantityChange = (amount) => {
+    setQuantity((prev) => Math.max(1, prev + amount));
+  };
 
   if (loading) {
-    return (
-      <div className='flex justify-center items-center min-h-screen'>
-        <Loader2 className='w-10 h-10 animate-spin text-gray-400' />
-        <p className='ml-2 text-gray-600'>Loading product details...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className='flex flex-col justify-center items-center min-h-screen text-red-600'>
-        <p className='text-lg font-semibold'>Error: {error}</p>
-        <p className='text-sm text-gray-500 mt-2'>
-          Please try again later or check the product ID.
-        </p>
-      </div>
-    );
+    return <ProductSkeleton />;
   }
 
   if (!product) {
     return (
       <div className='flex flex-col justify-center items-center min-h-screen text-gray-500'>
         <p className='text-lg font-semibold'>Product not available.</p>
-        <p className='text-sm mt-2'>
-          The product you are looking for might not exist or has been removed.
-        </p>
       </div>
     );
   }
 
-  // Render product details once data is loaded
+  const originalPrice = selectedVariant ? selectedVariant.price : product.price;
+  const discountedPrice = originalPrice * 0.8;
+  const displayStock = selectedVariant ? selectedVariant.stock : product.stock;
+  const images = product.images || [];
+
   return (
-    <div className='max-w-md mx-auto bg-white min-h-screen p-4'>
-      <h1 className='text-2xl font-bold mb-4'>{product.name}</h1>
-
-      {/* Main Image */}
-      <div className='w-full h-64 bg-gray-100 rounded-lg overflow-hidden mb-4 flex items-center justify-center'>
-        <img
-          src={
-            product.mainImage ||
-            product.images?.[0] ||
-            "/placeholder-product.png"
-          }
-          alt={product.name || "Product Image"}
-          className='w-full h-full object-cover'
-          onError={(e) => (e.currentTarget.src = "/placeholder-product.png")}
-        />
-      </div>
-
-      {/* Price */}
-      <div className='text-green-700 font-bold text-3xl mb-4'>
-        ₱{product.price ?? "N/A"}
-      </div>
-
-      {/* Static Sale and Sold Indicators (as per ProductGrid) */}
-      <div className='flex flex-col items-start text-sm mb-4'>
-        <span className='text-primary py-0.5 font-bold mb-0.5'>
-          Sale | ₱20 off
-        </span>
-        <span className='text-gray-500'>
-          Sold: <span className='font-semibold'>50+</span>
-        </span>
-      </div>
-
-      {/* Description */}
-      <div className='mb-4'>
-        <h2 className='text-lg font-semibold mb-2'>Description</h2>
-        <p className='text-gray-700 leading-relaxed'>
-          {product.description || "No description available."}
-        </p>
-      </div>
-
-      {/* Category */}
-      {product.category && (
-        <div className='mb-4'>
-          <h2 className='text-lg font-semibold mb-2'>Category</h2>
-          <span className='bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-0.5 rounded-full'>
-            {product.category}
-          </span>
-        </div>
-      )}
-
-      {/* Other details (example: SKU, Stock) */}
-      <div className='grid grid-cols-2 gap-4 text-sm text-gray-700 mb-4'>
-        {product.sku && (
-          <div>
-            <span className='font-semibold'>SKU:</span> {product.sku}
+    <>
+      <Header />
+      <div className='max-w-md mx-auto bg-white min-h-screen'>
+        <div className='p-4 pb-24'>
+          <button
+            onClick={() => router.back()}
+            className='flex items-center gap-1 text-md font-bold text-red-500 mb-4'
+          >
+            <ChevronLeft className='w-4 h-4' /> Back
+          </button>
+          {seller && (
+            <div>
+              <p className='font-semibold text-sm text-primary'>
+                {seller.storeName || "Anonymous Seller"}
+              </p>
+            </div>
+          )}
+          <h1 className='text-xl font-bold mb-4'>{product.name}</h1>
+          <div className='mb-4'>
+            <Carousel setApi={setCarouselApi} className='w-full'>
+              <CarouselContent>
+                {images.length > 0 ? (
+                  images.map((imgUrl, index) => (
+                    <CarouselItem key={index}>
+                      <Card className='border-none shadow-none rounded-lg'>
+                        <CardContent className='flex aspect-square items-center justify-center p-0'>
+                          <img
+                            src={imgUrl || "/placeholder-product.png"}
+                            alt={`${product.name} image ${index + 1}`}
+                            className='w-full h-full object-cover rounded-lg'
+                          />
+                        </CardContent>
+                      </Card>
+                    </CarouselItem>
+                  ))
+                ) : (
+                  <CarouselItem>
+                    <div className='flex aspect-square items-center justify-center p-0 bg-gray-100 rounded-lg'>
+                      <img
+                        src='/placeholder-product.png'
+                        alt='Placeholder'
+                        className='w-full h-full object-cover rounded-lg'
+                      />
+                    </div>
+                  </CarouselItem>
+                )}
+              </CarouselContent>
+            </Carousel>
+            <div className='py-2 flex justify-center gap-2'>
+              {Array.from({ length: slideCount }).map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => carouselApi?.scrollTo(index)}
+                  className={`h-2 rounded-full transition-all ${
+                    currentSlide === index
+                      ? "w-4 bg-primary"
+                      : "w-2 bg-gray-300"
+                  }`}
+                  aria-label={`Go to slide ${index + 1}`}
+                />
+              ))}
+            </div>
           </div>
-        )}
-        {typeof product.stock === "number" && (
-          <div>
-            <span className='font-semibold'>Stock:</span> {product.stock} units
+          <div className='my-2'>
+            <div className='flex items-end gap-2'>
+              <p className='text-green-700 font-bold text-3xl'>
+                {formatPrice(discountedPrice)}
+              </p>
+              <p className='text-gray-400 line-through text-lg'>
+                {formatPrice(originalPrice)}
+              </p>
+            </div>
+            <p className='text-sm mt-1'>
+              You save {formatPrice(originalPrice - discountedPrice)}
+              <span className='ml-2 bg-red-100 text-red-700 font-bold px-2 py-0.5 rounded-md text-xs'>
+                20% OFF
+              </span>
+            </p>
           </div>
-        )}
-      </div>
-
-      {/* You can add more details here like barcode, dimensions, tags, variants, etc. */}
-      {/* Example:
-      {product.barcode && (
-        <div className='text-sm text-gray-700 mb-2'>
-          <span className='font-semibold'>Barcode:</span> {product.barcode}
+          <div className='flex items-center gap-2 text-sm text-gray-600 mb-2'>
+            <Truck className='w-4 h-4 text-green-600' />
+            <span>Free delivery over ₱500</span>
+          </div>
+          <div className='flex items-center gap-2 text-sm text-gray-800 mb-2'>
+            <span className='font-bold text-blue-600'>Bethelia Express</span>
+            <span>Get it by {getDeliveryDate()}</span>
+          </div>
+          <div className='flex items-center gap-2 text-xs text-gray-500 mb-4'>
+            <Clock className='w-3.5 h-3.5' />
+            <span>
+              Order within the next{" "}
+              <span className='font-semibold text-red-600'>{timeLeft}</span>
+            </span>
+          </div>
+          {product.variants && product.variants.length > 0 && (
+            <div className='mb-4'>
+              <h2 className='text-sm font-semibold mb-2'>Available Variants</h2>
+              <div className='flex flex-wrap gap-2'>
+                {product.variants.map((variant, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => handleVariantSelect(variant)}
+                    className={`px-4 py-2 text-sm rounded-lg border ${
+                      selectedVariant === variant
+                        ? "bg-blue-600 text-white border-blue-600"
+                        : "bg-white text-gray-800 border-gray-300"
+                    }`}
+                  >
+                    {variant.option1}{" "}
+                    {variant.option2 && `- ${variant.option2}`}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+          <Tabs defaultValue='description' className='w-full mb-6'>
+            {/* --- UPDATED: 4 columns with smaller text --- */}
+            <TabsList className='grid w-full grid-cols-4 h-auto'>
+              <TabsTrigger value='description' className='text-xs px-1'>
+                Description
+              </TabsTrigger>
+              <TabsTrigger value='details' className='text-xs px-1'>
+                Details
+              </TabsTrigger>
+              <TabsTrigger value='reviews' className='text-xs px-1'>
+                Reviews
+              </TabsTrigger>
+              <TabsTrigger value='recommendations' className='text-xs px-1'>
+                More
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent
+              value='description'
+              className='mt-4 text-sm text-gray-700 leading-relaxed'
+            >
+              {product.description || "No description available."}
+            </TabsContent>
+            <TabsContent value='details' className='mt-4 text-sm'>
+              <ul className='space-y-2'>
+                {product.sku && (
+                  <li className='flex justify-between'>
+                    <span>SKU:</span>{" "}
+                    <span className='font-medium'>{product.sku}</span>
+                  </li>
+                )}
+                {product.category && (
+                  <li className='flex justify-between'>
+                    <span>Category:</span>{" "}
+                    <span className='font-medium'>{product.category}</span>
+                  </li>
+                )}
+                {product.weight && (
+                  <li className='flex justify-between'>
+                    <span>Weight:</span>{" "}
+                    <span className='font-medium'>{product.weight} kg</span>
+                  </li>
+                )}
+                {product.length && (
+                  <li className='flex justify-between'>
+                    <span>Dimensions:</span>{" "}
+                    <span className='font-medium'>
+                      {product.length} x {product.width} x {product.height} cm
+                    </span>
+                  </li>
+                )}
+              </ul>
+            </TabsContent>
+            <TabsContent
+              value='reviews'
+              className='mt-4 text-sm text-center text-gray-500'
+            >
+              <div className='flex justify-center items-center gap-1 mb-2'>
+                <Star className='w-5 h-5 text-yellow-400' />
+                <Star className='w-5 h-5 text-yellow-400' />
+                <Star className='w-5 h-5 text-yellow-400' />
+                <Star className='w-5 h-5 text-yellow-400' />
+                <Star className='w-5 h-5 text-gray-300' />
+              </div>
+              <p>No reviews yet for this product.</p>
+            </TabsContent>
+            <TabsContent
+              value='recommendations'
+              className='mt-4 text-sm text-center text-gray-500'
+            >
+              <p>Recommendations are not available yet.</p>
+            </TabsContent>
+          </Tabs>
         </div>
-      )}
-      */}
-
-      {/* Back button or Add to Cart button can go here */}
-      <div className='mt-6 flex justify-center'>
-        <button className='bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors'>
-          Add to Cart
-        </button>
       </div>
-    </div>
+
+      <div className='fixed bottom-0 left-0 right-0 w-full bg-white border-t'>
+        <div className='max-w-md mx-auto p-3 flex items-center gap-3'>
+          <div className='flex items-center border rounded-lg'>
+            <button
+              onClick={() => handleQuantityChange(-1)}
+              className='p-3 text-gray-600'
+            >
+              <Minus className='w-4 h-4' />
+            </button>
+            <span className='px-4 font-semibold'>{quantity}</span>
+            <button
+              onClick={() => handleQuantityChange(1)}
+              className='p-3 text-gray-600'
+            >
+              <Plus className='w-4 h-4' />
+            </button>
+          </div>
+          <button
+            onClick={handleAddToCart}
+            disabled={displayStock <= 0}
+            className='flex-1 bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 disabled:bg-gray-400'
+          >
+            <ShoppingCart className='w-5 h-5' />
+            Add to Cart
+          </button>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function ProductSkeleton() {
+  return (
+    <>
+      <Header />
+      <div className='max-w-md mx-auto p-4'>
+        <Skeleton className='h-6 w-1/3 mb-2' />
+        <Skeleton className='h-8 w-3/4 mb-4' />
+        <Skeleton className='w-full aspect-square rounded-lg mb-4' />
+        <Skeleton className='h-10 w-1/2 mb-2' />
+        <Skeleton className='h-6 w-1/4 mb-4' />
+        <Skeleton className='h-24 w-full' />
+      </div>
+    </>
   );
 }

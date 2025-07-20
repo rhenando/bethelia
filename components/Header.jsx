@@ -3,8 +3,8 @@ import React from "react";
 import { Heart, ShoppingCart, Search } from "lucide-react";
 
 export default function Header() {
-  const wishCount = 2; // Static fallback
-  const cartCount = 3; // Static fallback
+  const wishCount = 0;
+  const cartCount = 0;
 
   return (
     <header className='flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-white'>

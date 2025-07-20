@@ -4,12 +4,13 @@ import NavbarMobile from "@/components/NavbarMobile";
 
 export default function LayoutShell({ children }) {
   const pathname = usePathname();
-  // Add more routes as needed
+
   const hideNavbar =
-    pathname === "/buyer-signup" ||
+    pathname === "/buyer-signin" ||
     pathname === "/seller-login" ||
     pathname === "/signup" ||
-    pathname === "/login";
+    pathname === "/login" ||
+    pathname.startsWith("/product/");
 
   return (
     <>
