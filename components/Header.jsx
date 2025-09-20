@@ -2,6 +2,7 @@
 import React from "react";
 import { Heart, ShoppingCart, Search } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Header() {
   const wishCount = 0;
@@ -9,9 +10,16 @@ export default function Header() {
 
   return (
     <header className='flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-white'>
-      <Link href='/'>
+      <Link href='/' className='flex items-center gap-2'>
+        <Image
+          src='/bethelia.png'
+          alt='Bethelia Logo'
+          width={42}
+          height={42}
+          className='object-contain'
+        />
         <span className='font-extrabold text-lg tracking-tight text-[var(--primary,theme(colors.blue.700))] select-none'>
-          Bethelia PH
+          Bethelia
         </span>
       </Link>
 

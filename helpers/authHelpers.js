@@ -16,141 +16,258 @@ import { auth } from "@/lib/firebase";
  */
 export const convertTimestamps = (data) => {
   if (!data) return data;
-  const convertedData = { ...data };
-  for (const key in convertedData) {
-    // Check if the value is a Firestore Timestamp
-    if (convertedData[key] && typeof convertedData[key].toDate === "function") {
-      convertedData[key] = convertedData[key].toDate().toISOString();
+
+  const convertValue = (value) => {
+    // Handle null or undefined
+    if (value === null || value === undefined) {
+      return value;
     }
-  }
-  return convertedData;
+
+    // Handle Firestore Timestamp objects
+    if (value && typeof value.toDate === "function") {
+      return value.toDate().toISOString();
+    }
+
+    // Handle arrays
+    if (Array.isArray(value)) {
+      return value.map(convertValue);
+    }
+
+    // Handle nested objects
+    if (typeof value === "object" && value.constructor === Object) {
+      const converted = {};
+      for (const key in value) {
+        converted[key] = convertValue(value[key]);
+      }
+      return converted;
+    }
+
+    // Return primitive values as-is
+    return value;
+  };
+
+  return convertValue(data);
 };
 
 /**
  * Check if a user exists in a specific collection
  */
 export const checkUserExists = async (uid, collection) => {
-  const db = getFirestore();
-  const userRef = doc(db, collection, uid);
-  const userSnap = await getDoc(userRef);
-  return userSnap.exists();
+  try {
+    const db = getFirestore();
+    const userRef = doc(db, collection, uid);
+    const userSnap = await getDoc(userRef);
+    return userSnap.exists();
+  } catch (error) {
+    console.error(`Error checking user existence in ${collection}:`, error);
+    throw error;
+  }
 };
 
 /**
  * Create a new buyer account
  */
 export const createBuyerAccount = async (user) => {
-  const db = getFirestore();
-  const buyerRef = doc(db, "buyers", user.uid);
+  try {
+    console.log("🔄 Creating buyer account for:", user.uid);
+    const db = getFirestore();
+    const buyerRef = doc(db, "buyers", user.uid);
 
-  const buyerData = {
-    uid: user.uid,
-    email: user.email || null,
-    phoneNumber: user.phoneNumber || null,
-    displayName: user.displayName || null,
-    photoURL: user.photoURL || null,
-    shippingAddresses: [],
-    savedPaymentMethods: [],
-    wishlist: [],
-    recentlyViewed: [],
-    followedStores: [],
-    totalOrders: 0,
-    totalSpent: 0,
-    currency: "SAR",
-    preferences: {
-      language: "en",
+    const buyerData = {
+      uid: user.uid,
+      email: user.email || null,
+      phoneNumber: user.phoneNumber || null,
+      displayName: user.displayName || null,
+      photoURL: user.photoURL || null,
+      shippingAddresses: [],
+      savedPaymentMethods: [],
+      wishlist: [],
+      recentlyViewed: [],
+      followedStores: [],
+      totalOrders: 0,
+      totalSpent: 0,
       currency: "SAR",
-      emailNotifications: true,
-      smsNotifications: true,
-      orderUpdates: true,
-      promotions: false,
-    },
-    status: "active",
-    emailVerified: user.emailVerified || false,
-    phoneVerified: false,
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp(),
-    lastLoginAt: serverTimestamp(),
-  };
+      preferences: {
+        language: "en",
+        currency: "SAR",
+        emailNotifications: true,
+        smsNotifications: true,
+        orderUpdates: true,
+        promotions: false,
+      },
+      status: "active",
+      emailVerified: user.emailVerified || false,
+      phoneVerified: false,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+      lastLoginAt: serverTimestamp(),
+    };
 
-  await setDoc(buyerRef, buyerData);
-  return buyerData;
+    console.log("🔄 Writing buyer data to Firestore...");
+    await setDoc(buyerRef, buyerData);
+    console.log("✅ Buyer account created successfully");
+
+    // For new accounts, convert server timestamps to current time for immediate use
+    const nowISO = new Date().toISOString();
+    const dataForRedux = {
+      ...buyerData,
+      createdAt: nowISO,
+      updatedAt: nowISO,
+      lastLoginAt: nowISO,
+    };
+
+    console.log("✅ Converted timestamps for Redux storage");
+    return dataForRedux;
+  } catch (error) {
+    console.error("❌ Error creating buyer account:", error);
+    throw new Error(`Failed to create buyer account: ${error.message}`);
+  }
 };
 
 /**
  * Create a new seller account
  */
 export const createSellerAccount = async (user, additionalInfo = {}) => {
-  const db = getFirestore();
-  const sellerRef = doc(db, "sellers", user.uid);
+  try {
+    console.log("🔄 Creating seller account for:", user.uid);
+    const db = getFirestore();
+    const sellerRef = doc(db, "sellers", user.uid);
 
-  const sellerData = {
-    uid: user.uid,
-    email: user.email || null,
-    phoneNumber: user.phoneNumber || null,
-    storeName: additionalInfo.storeName || null,
-    storeSlug: null,
-    storeDescription: null,
-    storeLogo: null,
-    storeBanner: null,
-    businessDetails: {
-      legalName: null,
-      businessType: "individual",
-      registrationNumber: null,
-      vatNumber: null,
-      address: {},
-    },
-    verificationStatus: "pending",
-    verificationDocuments: [],
-    verifiedAt: null,
-    bankAccount: null,
-    stripeAccountId: null,
-    stripeAccountStatus: null,
-    metrics: {
-      totalProducts: 0,
-      totalOrders: 0,
-      totalRevenue: 0,
-      averageRating: 0,
-      totalReviews: 0,
-      responseTime: null,
-      fulfillmentRate: 0,
-    },
-    policies: {
-      returnPeriod: 14,
-      shippingMethods: ["standard"],
-      refundPolicy: null,
-      warrantyInfo: null,
-    },
-    categories: [],
-    status: "active",
-    suspensionReason: null,
-    subscriptionPlan: "basic",
-    subscriptionExpiresAt: null,
-    features: ["basic_upload"],
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp(),
-    lastLoginAt: serverTimestamp(),
-    lastSaleAt: null,
-  };
+    const sellerData = {
+      uid: user.uid,
+      email: user.email || null,
+      phoneNumber: user.phoneNumber || null,
+      storeName: additionalInfo.storeName || null,
+      storeSlug: null,
+      storeDescription: null,
+      storeLogo: null,
+      storeBanner: null,
+      businessDetails: {
+        legalName: null,
+        businessType: "individual",
+        registrationNumber: null,
+        vatNumber: null,
+        address: {},
+      },
+      verificationStatus: "pending",
+      verificationDocuments: [],
+      verifiedAt: null,
+      bankAccount: null,
+      stripeAccountId: null,
+      stripeAccountStatus: null,
+      metrics: {
+        totalProducts: 0,
+        totalOrders: 0,
+        totalRevenue: 0,
+        averageRating: 0,
+        totalReviews: 0,
+        responseTime: null,
+        fulfillmentRate: 0,
+      },
+      policies: {
+        returnPeriod: 14,
+        shippingMethods: ["standard"],
+        refundPolicy: null,
+        warrantyInfo: null,
+      },
+      categories: [],
+      status: "active",
+      suspensionReason: null,
+      subscriptionPlan: "basic",
+      subscriptionExpiresAt: null,
+      features: ["basic_upload"],
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+      lastLoginAt: serverTimestamp(),
+      lastSaleAt: null,
+    };
 
-  await setDoc(sellerRef, sellerData);
-  return sellerData;
+    console.log("🔄 Writing seller data to Firestore...");
+    await setDoc(sellerRef, sellerData);
+    console.log("✅ Seller account created successfully");
+
+    // For new accounts, convert server timestamps to current time for immediate use
+    const nowISO = new Date().toISOString();
+    const dataForRedux = {
+      ...sellerData,
+      createdAt: nowISO,
+      updatedAt: nowISO,
+      lastLoginAt: nowISO,
+    };
+
+    console.log("✅ Converted timestamps for Redux storage");
+    return dataForRedux;
+  } catch (error) {
+    console.error("❌ Error creating seller account:", error);
+    throw new Error(`Failed to create seller account: ${error.message}`);
+  }
 };
 
 /**
  * Get buyer data or create if doesn't exist
  */
 export const getOrCreateBuyer = async (user) => {
-  const db = getFirestore();
-  const buyerRef = doc(db, "buyers", user.uid);
-  const buyerSnap = await getDoc(buyerRef);
+  try {
+    console.log("🔄 getOrCreateBuyer called for:", user.uid);
 
-  if (buyerSnap.exists()) {
-    await setDoc(buyerRef, { lastLoginAt: serverTimestamp() }, { merge: true });
-    return { data: buyerSnap.data(), isNew: false };
-  } else {
-    const buyerData = await createBuyerAccount(user);
-    return { data: buyerData, isNew: true };
+    if (!user || !user.uid) {
+      throw new Error("Invalid user object provided");
+    }
+
+    const db = getFirestore();
+    const buyerRef = doc(db, "buyers", user.uid);
+
+    console.log("🔄 Checking if buyer exists in Firestore...");
+    const buyerSnap = await getDoc(buyerRef);
+
+    if (buyerSnap.exists()) {
+      console.log("✅ Existing buyer found, updating last login");
+
+      // Update last login
+      await setDoc(
+        buyerRef,
+        {
+          lastLoginAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+        },
+        { merge: true }
+      );
+
+      const rawData = buyerSnap.data();
+      const convertedData = convertTimestamps(rawData);
+
+      console.log("✅ Returning existing buyer data");
+      return { data: convertedData, isNew: false };
+    } else {
+      console.log("📝 No existing buyer found, creating new account");
+      const buyerData = await createBuyerAccount(user);
+      console.log("✅ New buyer account created and returning data");
+      return { data: buyerData, isNew: true };
+    }
+  } catch (error) {
+    console.error("❌ Error in getOrCreateBuyer:", {
+      message: error.message,
+      stack: error.stack,
+      userUid: user?.uid,
+      userEmail: user?.email,
+    });
+
+    // More specific error messages
+    if (error.code === "permission-denied") {
+      throw new Error(
+        "Permission denied. Please check your Firebase security rules."
+      );
+    } else if (error.code === "unavailable") {
+      throw new Error(
+        "Firestore service is temporarily unavailable. Please try again."
+      );
+    } else if (error.message.includes("Failed to create buyer account")) {
+      throw error; // Already has a good message
+    } else {
+      throw new Error(
+        `Failed to get or create buyer account: ${error.message}`
+      );
+    }
   }
 };
 
@@ -158,20 +275,66 @@ export const getOrCreateBuyer = async (user) => {
  * Get seller data or create if doesn't exist
  */
 export const getOrCreateSeller = async (user, additionalInfo = {}) => {
-  const db = getFirestore();
-  const sellerRef = doc(db, "sellers", user.uid);
-  const sellerSnap = await getDoc(sellerRef);
+  try {
+    console.log("🔄 getOrCreateSeller called for:", user.uid);
 
-  if (sellerSnap.exists()) {
-    await setDoc(
-      sellerRef,
-      { lastLoginAt: serverTimestamp() },
-      { merge: true }
-    );
-    return { data: sellerSnap.data(), isNew: false };
-  } else {
-    const sellerData = await createSellerAccount(user, additionalInfo);
-    return { data: sellerData, isNew: true };
+    if (!user || !user.uid) {
+      throw new Error("Invalid user object provided");
+    }
+
+    const db = getFirestore();
+    const sellerRef = doc(db, "sellers", user.uid);
+
+    console.log("🔄 Checking if seller exists in Firestore...");
+    const sellerSnap = await getDoc(sellerRef);
+
+    if (sellerSnap.exists()) {
+      console.log("✅ Existing seller found, updating last login");
+
+      await setDoc(
+        sellerRef,
+        {
+          lastLoginAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+        },
+        { merge: true }
+      );
+
+      const rawData = sellerSnap.data();
+      const convertedData = convertTimestamps(rawData);
+
+      console.log("✅ Returning existing seller data");
+      return { data: convertedData, isNew: false };
+    } else {
+      console.log("📝 No existing seller found, creating new account");
+      const sellerData = await createSellerAccount(user, additionalInfo);
+      console.log("✅ New seller account created and returning data");
+      return { data: sellerData, isNew: true };
+    }
+  } catch (error) {
+    console.error("❌ Error in getOrCreateSeller:", {
+      message: error.message,
+      stack: error.stack,
+      userUid: user?.uid,
+      userEmail: user?.email,
+    });
+
+    // More specific error messages
+    if (error.code === "permission-denied") {
+      throw new Error(
+        "Permission denied. Please check your Firebase security rules."
+      );
+    } else if (error.code === "unavailable") {
+      throw new Error(
+        "Firestore service is temporarily unavailable. Please try again."
+      );
+    } else if (error.message.includes("Failed to create seller account")) {
+      throw error; // Already has a good message
+    } else {
+      throw new Error(
+        `Failed to get or create seller account: ${error.message}`
+      );
+    }
   }
 };
 
@@ -179,7 +342,12 @@ export const getOrCreateSeller = async (user, additionalInfo = {}) => {
  * Check user type across collections
  */
 export const checkUserType = async (uid) => {
-  const isBuyer = await checkUserExists(uid, "buyers");
-  const isSeller = await checkUserExists(uid, "sellers");
-  return { isBuyer, isSeller };
+  try {
+    const isBuyer = await checkUserExists(uid, "buyers");
+    const isSeller = await checkUserExists(uid, "sellers");
+    return { isBuyer, isSeller };
+  } catch (error) {
+    console.error("Error checking user type:", error);
+    throw new Error(`Failed to check user type: ${error.message}`);
+  }
 };
