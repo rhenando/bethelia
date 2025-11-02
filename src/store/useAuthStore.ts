@@ -1,3 +1,4 @@
+// src/store/useAuthStore.ts
 import { create } from "zustand";
 
 interface User {
@@ -7,13 +8,16 @@ interface User {
 
 interface AuthState {
   user: User | null;
+  token: string | null; // ✅ added token field
   setUser: (user: User | null) => void;
+  setToken: (token: string | null) => void; // ✅ added setter
   logout: () => void;
 }
 
-// ✅ Named export
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
+  token: null,
   setUser: (user) => set({ user }),
-  logout: () => set({ user: null }),
+  setToken: (token) => set({ token }),
+  logout: () => set({ user: null, token: null }),
 }));
