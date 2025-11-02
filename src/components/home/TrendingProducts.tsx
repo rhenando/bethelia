@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Heart } from "lucide-react";
 import { products } from "../../../data/products";
 import ProductCard from "@/components/product/ProductCard";
-import { flyToCartAnimation } from "@/utils/flyToCart"; // ✅ ensure this utility exists
 
 const categories = ["All", "Fashion", "Electronics", "Home", "Beauty"];
 
@@ -22,15 +21,6 @@ export default function TrendingProducts() {
     setWishlist((prev) =>
       prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
     );
-  };
-
-  // ✅ Stable Add-to-Cart handler with delay for animation
-  const handleAddToCart = (id: number) => {
-    flyToCartAnimation(id); // trigger animation
-    // simulate cart update logic after animation completes
-    setTimeout(() => {
-      console.log("Added product:", id);
-    }, 900);
   };
 
   return (
@@ -79,10 +69,15 @@ export default function TrendingProducts() {
               />
             </button>
 
-            {/* ✅ ProductCard with working animation */}
+            {/* ✅ ProductCard (aligned with your props) */}
             <ProductCard
-              {...item}
-              oldPrice={item.price + 300}
+              id={item.id}
+              name={item.name}
+              image={item.image}
+              price={item.price}
+              oldPrice={item.oldPrice ?? item.price + 300}
+              discount={item.discount ?? 10}
+              rating={item.rating ?? 4.5}
               variant={
                 item.variants?.includes("trending")
                   ? "trending"
@@ -90,7 +85,6 @@ export default function TrendingProducts() {
                   ? "flash-deal"
                   : undefined
               }
-              onAddToCart={handleAddToCart}
             />
           </div>
         ))}
